@@ -13,7 +13,8 @@ if (!fs.existsSync(OUTPUT_FOLDER)) {
 }
 
 async function generatePdf(data, type, attempt = 0) {
-  const outputPath = path.join(OUTPUT_FOLDER, `pdf-${Date.now()}.pdf`);
+  const applicationId = data.applicationId;
+  const outputPath = path.join(OUTPUT_FOLDER, `${applicationId}-${Date.now()}.pdf`);
   const htmlPath = `file://${path.join(TEMPLATE_FOLDER, type, `${type}.html`)}`;
 
   const browser = await puppeteer.launch({
