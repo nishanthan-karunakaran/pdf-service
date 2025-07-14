@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
+    "test:prod": "node test-production.js",
+    "test:chrome": "node test-chrome.js",
     "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
+    "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "puppeteer": "^24.12.0"
   },

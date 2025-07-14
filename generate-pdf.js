@@ -30,9 +30,9 @@ async function generatePdf(data, type, attempt = 0) {
       waitUntil: "load",
       timeout: 0,
     });
-
+        
     // Inject data via postMessage
-    // await page.evaluate((payload) => {
+// await page.evaluate((payload) => {
     //   window.postMessage(payload, "*");
     // }, data);
     await page.evaluate((data) => {
@@ -45,7 +45,7 @@ async function generatePdf(data, type, attempt = 0) {
       );
     }, data);
 
-
+    
     // Wait for JS to finish DOM manipulation
     await page.waitForFunction(() => window.status === "ready", {
       timeout: WAIT_TIMEOUT,
@@ -63,10 +63,10 @@ async function generatePdf(data, type, attempt = 0) {
     return outputPath;
   } catch (err) {
     console.error(`[${attempt}] Error: ${err.message}`);
-    const screenshotPath = path.join(OUTPUT_FOLDER, `error-${Date.now()}.png`);
-    await page.screenshot({ path: screenshotPath, fullPage: true });
-    console.log(`Saved error screenshot at: ${screenshotPath}`);
-
+          const screenshotPath = path.join(OUTPUT_FOLDER, `error-${Date.now()}.png`);
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+      console.log(`Saved error screenshot at: ${screenshotPath}`);
+    
     await browser.close();
 
     if (attempt + 1 < MAX_RETRIES) {

@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    background: #fff;
+    color: #222;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .bank-logo {
+    height: 40px;
+  }
+  
+  h1 {
+    font-size: 22px;
+    color: #003366;
+    margin: 0;
+  }
+  
+  .entity-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+  
+  .entity-left h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #003366;
+  }
+  
+  .entity-left p,
+  .entity-right p {
+    margin: 6px 0;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  table th,
+  table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .verified {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .unverified {
+    color: #888;
+    font-weight: bold;
+  }
+  
+  .mismatch {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 50px;
+    color: #666;
+  }
+  
