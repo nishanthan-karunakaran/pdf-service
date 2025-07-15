@@ -14,44 +14,15 @@ if (!fs.existsSync(OUTPUT_FOLDER)) {
 
 // Transform the payload data to match the report template format
 function transformDataForReport(payload) {
+  // For now, just pass the original data structure since our template functions expect it
+  // The template will extract what it needs using the utility functions
   const data = payload.data || payload;
   
+  // Just ensure we have the basic fields the template expects
   return {
-    entityId: data.applicationId,
-    entityName: data.entityName,
-    entityType: data.entityType,
-    entityDetails: {
-      cin: { cinNumber: data.cin },
-      gstin: { gstinNumber: data.pan } // Using PAN as GSTIN for now
-    },
-    submittedAt: data.submittedAt?.$date || data.submittedAt,
-    date: data.updatedAt?.$date || data.updatedAt || new Date(),
-    
-    // Transform entityDocs
-    entityDocs: Object.values(data.entityDocs || {}).map(doc => ({
-      label: doc.label,
-      status: doc.extractedContent?.error ? "Unverified" : "Verified",
-      validationType: doc.extractedContent?.error ? "Error" : "OCR",
-      verifiedOn: doc.uploadedAt ? new Date(doc.uploadedAt) : new Date(),
-      extractedContent: { 
-        isVerified: doc.extractedContent?.error ? "Unverified" : "Verified" 
-      }
-    })),
-    
-    // Transform authorizedSignatories
-    authorizedSignatories: (data.authorizedSignatories || []).map(aus => ({
-      name: aus.fullName,
-      email: aus.emailAddress,
-      documentStatus: Object.values(aus.personalDocuments || {}).map(doc => ({
-        docType: "identityProof", // Default to identityProof
-        status: doc.extractedData?.error ? "Unverified" : "Verified",
-        validationType: doc.extractedData?.error ? "Error" : "OCR",
-        verifiedOn: new Date(),
-        extractedContent: { 
-          isVerified: doc.extractedData?.error ? "Unverified" : "Verified" 
-        }
-      }))
-    }))
+    ...data,
+    entityId: data.applicationId || data.entityId,
+    // Keep all original structure intact for utility functions
   };
 }
 
@@ -77,35 +48,21 @@ async function generateKycusReportPdf(data, type, attempt = 0) {
       timeout: 0,
     });
 
-    // Inject data via setReportFormData function
+    // Inject data via postMessage (same as working generate endpoint)
     await page.evaluate((data) => {
-      if (window.setReportFormData) {
-        window.setReportFormData(data);
-      } else {
-        // Fallback to postMessage if setReportFormData is not available
-        window.postMessage(
-          {
-            type: "SET_REPORT_FORM_DATA",
-            payload: data,
-          },
-          "*"
-        );
-      }
+      window.postMessage(
+        {
+          type: "SET_FORM_DATA",
+          payload: data,
+        },
+        "*"
+      );
     }, transformedData);
 
-    // Wait for JS to finish DOM manipulation
-    await page.waitForFunction(() => {
-      // Check if content has been populated and entity name is set
-      const content = document.getElementById("content");
-      const entityName = document.getElementById("entityName");
-      return content && content.innerHTML.trim() !== "" && 
-             entityName && entityName.textContent.trim() !== "";
-    }, {
+    // Wait for JS to finish DOM manipulation using the same pattern as generate-pdf.js
+    await page.waitForFunction(() => window.status === "ready", {
       timeout: WAIT_TIMEOUT,
     });
-
-    // Additional wait to ensure all rendering is complete
-    await page.waitFor(2000);
 
     // Save to PDF
     await page.pdf({
@@ -151,47 +108,4 @@ async function generateKycusReport(data) {
     throw error;
   }
 }
-
-// Example data structure for KYCUS report
-const exampleData = {
-  data: {
-    applicationId: "REKYCAPP00001",
-    entityName: "Ebitaus Private Limited",
-    entityType: "PUBLIC_LIMITED",
-    cin: "CIN121212121212121212",
-    pan: "CIXPN9255M",
-    submittedAt: { "$date": "2025-07-07T09:24:19.335Z" },
-    updatedAt: { "$date": "2025-07-07T10:08:46.554Z" },
-    entityDocs: {
-      br: {
-        fileName: "3. Hathway.pdf",
-        label: "Board Resolution for ReKYC",
-        extractedContent: { error: "Not a valid Board Resolution Document" },
-        uploadedAt: "2025-07-07T15:01:05.150239"
-      },
-      coi: {
-        fileName: "4. Ebitaus P Ltd - Certificate of Incorporation.pdf",
-        label: "Certificate of Incorporation",
-        extractedContent: {
-          companyName: "EBITAUS PRIVATE LIMITED",
-          cin: "U62099TN2023PTC158659"
-        },
-        uploadedAt: "2025-07-07T15:00:43.711317"
-      }
-    },
-    authorizedSignatories: [
-      {
-        fullName: "Nishanthan",
-        emailAddress: "nishanthan.karunakaran@ebitaus.com",
-        personalDocuments: {
-          personalpan: {
-            fileName: "Nishanthan Pan Card.pdf",
-            extractedData: { error: "Not a valid Individual PAN card" }
-          }
-        }
-      }
-    ]
-  }
-};
-
 module.exports = { generateKycusReportPdf, generateKycusReport };

@@ -1,90 +1,463 @@
+
+:root {
+  --title-text: 14px;
+  --body-text: 12px;
+  --primary-text: #4b4b4d;
+  --primary-blue: #01327e;
+  --primary-orange: #ff8754;
+  --primary-border: #99a1af;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 30px;
-    background: #fff;
-    color: #222;
-  }
-  
-  .container {
-    max-width: 900px;
-    margin: auto;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 30px;
-  }
-  
-  .bank-logo {
-    height: 40px;
-  }
-  
-  h1 {
-    font-size: 22px;
-    color: #003366;
-    margin: 0;
-  }
-  
-  .entity-section {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-  }
-  
-  .entity-left h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #003366;
-  }
-  
-  .entity-left p,
-  .entity-right p {
-    margin: 6px 0;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  
-  table th,
-  table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    font-size: 14px;
-    text-align: left;
-  }
-  
-  table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-  }
-  
-  .verified {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .unverified {
-    color: #888;
-    font-weight: bold;
-  }
-  
-  .mismatch {
-    color: red;
-    font-weight: bold;
-  }
-  
-  .footer {
-    text-align: center;
+  font-family: Arial, sans-serif;
+  line-height: 1.4;
+  color: var(--primary-text);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Page Structure for PDF */
+.page {
+  width: 210mm;
+  height: 297mm;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  page-break-after: always;
+  position: relative;
+}
+
+.page:last-child {
+  page-break-after: auto;
+}
+
+/* PDF Document Structure */
+.pdf-page {
+  width: 210mm;
+  height: 297mm;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+/* Page Header - appears on every page */
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-border);
+}
+
+.page-header h1 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--primary-blue);
+}
+
+/* Page Content - main area */
+.page-content {
+  padding: 20px 0 60px 0;
+  background: #fff;
+}
+
+/* Form Section Structure */
+.form-section {
+  padding: 0.5rem 0;
+  border-bottom: 2px solid var(--primary-border);
+}
+
+/* Page Footer - appears on every page */
+.page-footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--primary-border);
+  color: var(--primary-blue);
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.page-footer strong {
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+
+/* Entity Section - Only on first page */
+.entity-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--primary-border);
+}
+
+.entity-left {
+  width: 50%;
+  padding-right: 40px;
+}
+
+.entity-left h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.entity-left > p {
+  font-size: 14px;
+  color: var(--primary-text);
+  margin-bottom: 15px;
+  font-weight: normal;
+}
+
+.entity-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.entity-right {
+  width: 50%;
+  text-align: right;
+}
+.entity-right {
+  width: 50%;
+  text-align: right;
+}
+
+.application-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 20px;
+}
+
+.entity-right .detail-row {
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.detail-row .label {
+  font-weight: bold;
+  color: var(--primary-text);
+  font-size: 12px;
+}
+
+.detail-row span:last-child {
+  color: var(--primary-text);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.entity-right .detail-row .label {
+  color: var(--primary-text);
+  font-weight: normal;
+}
+
+/* Section Headers */
+.section {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+.section h3 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--primary-border);
+}
+
+/* Table Styles */
+.files-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+  font-size: 11px;
+  border: 1px solid var(--primary-border);
+}
+
+.files-table thead {
+  background: #f5f5f5;
+}
+
+.files-table th {
+  padding: 8px 6px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 11px;
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-border);
+  background: #f5f5f5;
+}
+
+.files-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--primary-border);
+  font-size: 11px;
+  color: var(--primary-text);
+  vertical-align: top;
+  background: #fff;
+}
+
+/* Status Indicators */
+.status {
+  display: inline-block;
+  padding: 1px 4px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.status.verified {
+  color: #22c55e;
+}
+
+.status.unverified {
+  color: #6b7280;
+}
+
+.status.mismatch {
+  color: #ef4444;
+}
+
+.status.error {
+  color: #ef4444;
+}
+
+/* Director/AUS Page Styles */
+.person-page {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.person-section {
+  flex: 1;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+.person-header {
+  margin-bottom: 15px;
+}
+
+.person-header h3 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-bottom: 10px;
+}
+
+.person-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.person-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-text);
+}
+
+.person-email {
+  font-size: 12px;
+  color: var(--primary-text);
+  font-weight: normal;
+}
+
+.person-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.person-detail {
+  font-size: 11px;
+  color: var(--primary-text);
+  font-weight: normal;
+}
+
+.person-table {
+  background: #fff;
+  margin-top: 15px;
+}
+
+/* Director Card Styles */
+.director-card {
+  border: 1px solid var(--primary-border);
+  margin-bottom: 15px;
+  background: #fff;
+}
+
+.director-header {
+  background: #f5f5f5;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--primary-border);
+}
+
+.director-header h4 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--primary-blue);
+}
+
+.director-details {
+  padding: 12px;
+}
+
+.detail-group {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.detail-group:last-child {
+  margin-bottom: 0;
+}
+
+.detail-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding-right: 15px;
+}
+
+.detail-row .label {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--primary-text);
+  min-width: 120px;
+  margin-right: 10px;
+}
+
+.detail-row .value {
+  font-size: 12px;
+  color: var(--primary-text);
+  border-bottom: 1px solid var(--primary-border);
+  padding: 2px 4px;
+  flex: 1;
+}
+
+/* Print Optimization */
+@media print {
+  body {
     font-size: 12px;
-    margin-top: 50px;
-    color: #666;
   }
+  
+  .page {
+    margin: 0;
+    page-break-after: always;
+  }
+  
+  .page:last-child {
+    page-break-after: auto;
+  }
+  
+  .page-content {
+    padding: 25px;
+  }
+  
+  .files-table th,
+  .files-table td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+  
+  .person-section {
+    margin-bottom: 10px;
+  }
+  
+  .status {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+  
+  .section h3 {
+    font-size: 15px;
+  }
+  
+  .person-header h3 {
+    font-size: 13px;
+  }
+  
+  .page-header h1 {
+    font-size: 16px;
+  }
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.text-gray {
+  color: var(--primary-text);
+}
+
+/* Two-person layout for pages */
+.two-person-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
+}
+
+.two-person-layout .person-section {
+  flex: 1;
+  min-height: 250px;
+  max-height: 350px;
+}
+
+/* Table specific to person sections */
+.person-section .files-table {
+  margin-bottom: 0;
+  font-size: 11px;
+}
+
+.person-section .files-table th {
+  padding: 8px 6px;
+  font-size: 11px;
+}
+
+.person-section .files-table td {
+  padding: 6px;
+  font-size: 11px;
+}
   
