@@ -18,7 +18,7 @@ app.use('/templates', express.static(path.join(__dirname, 'template')));
 app.post("/generate", async (req, res) => {
   try {
     const { data, type } = req.body;
-    console.log("\n", data, "\n")
+    console.log("\nData received for generate endpoint\n")
     const pdfPath = await generatePdf(data, type);
     
     // Read the PDF file and convert to base64
@@ -41,7 +41,7 @@ app.post("/generate", async (req, res) => {
 app.post("/final-report", async (req, res) => {
   try {
     const { data, type } = req.body;
-    console.log("\n", data, "\n")
+    console.log("\nData received for final-report endpoint\n")
     const pdfPath = await generateKycusReportPdf(data, type);
     
     // Read the PDF file and convert to base64
@@ -49,15 +49,15 @@ app.post("/final-report", async (req, res) => {
     const base64Pdf = pdfBuffer.toString('base64');
     
     // Clean up the temporary file
-    // fs.unlinkSync(pdfPath);
+    fs.unlinkSync(pdfPath);
 
-    res.download(pdfPath);
+    // res.download(pdfPath);
     
-    // res.json({ 
-    //   success: true, 
-    //   pdf: base64Pdf,
-    //   filename: `${data.applicationId}-${Date.now()}.pdf`
-    // });
+    res.json({ 
+      success: true, 
+      pdf: base64Pdf,
+      filename: `${data.applicationId}-${Date.now()}.pdf`
+    });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
