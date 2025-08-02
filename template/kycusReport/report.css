@@ -239,6 +239,10 @@ body {
   color: #22c55e;
 }
 
+.status.uploaded {
+  color: #01327e;
+}
+
 .status.unverified {
   color: #6b7280;
 }

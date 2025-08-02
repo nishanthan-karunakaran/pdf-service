@@ -38,6 +38,10 @@ window.setReportFormData = function(inputData) {
 
 // Populate basic entity information on Page 1
 function populateEntityInfo(data) {
+  // Set dynamic report header based on applicationId
+  const reportType = getReportType(data.applicationId);
+  document.getElementById('reportHeader').textContent = `${reportType} - NON INDIVIDUALS`;
+  
   // Entity basic info
   document.getElementById('entityName').textContent = data.entityName || 'N/A';
   document.getElementById('entityType').textContent = formatEntityType(data.entityType) || 'N/A';
@@ -149,7 +153,8 @@ function createPersonPage(person1, person2, pageNumber) {
   // Header
   const header = document.createElement('div');
   header.className = 'page-header';
-  header.innerHTML = '<h1>RE KYC - NON INDIVIDUALS</h1>';
+  const reportType = getReportType(reportData?.applicationId);
+  header.innerHTML = `<h1>${reportType} - NON INDIVIDUALS</h1>`;
   
   // Content
   const content = document.createElement('div');
@@ -395,6 +400,48 @@ function createPersonDocRow(doc, docType) {
 
 // Utility functions
 
+function getReportType(applicationId) {
+  if (!applicationId) return 'KYC';
+  
+  const id = applicationId.toString().toUpperCase();
+  
+  // Check for RE-KYC patterns
+  if (id.includes('REKYC') || id.includes('RE-KYC') || id.includes('REKYCAPP')) {
+    return 'RE KYC';
+  }
+  
+  // Default to KYC
+  return 'KYC';
+}
+
+function isPanOrGstinDocument(docType) {
+  if (!docType) return false;
+  
+  const type = docType.toLowerCase();
+  
+  // PAN variations: pan, pan_card, personalpan
+  const panPatterns = ['pan', 'personalpan'];
+  
+  // GSTIN variations: gst, gst_certificate, gstin
+  const gstinPatterns = ['gst', 'gstin'];
+  
+  // Check for PAN patterns
+  for (const pattern of panPatterns) {
+    if (type.includes(pattern)) {
+      return true;
+    }
+  }
+  
+  // Check for GSTIN patterns
+  for (const pattern of gstinPatterns) {
+    if (type.includes(pattern)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
 function getPersonIndex(person) {
   // This will be handled dynamically when we create the pages
   // For now, we'll use a simple counter
@@ -468,20 +515,25 @@ function getGSTINFromDocs(data) {
 }
 
 function getDocumentStatus(doc) {
+  // 1. Check for Not Uploaded - no filename
+  if (!doc.fileName) {
+    return { class: 'unverified', text: 'Not Uploaded' };
+  }
+  
+  // 2. Check for Mismatch - extraction errors
   if (doc.extractedContent?.error || doc.extractedData?.error) {
     return { class: 'mismatch', text: 'Mismatch' };
   }
   
-  if (doc.verificationData?.isVerified) {
+  // 3. Check if PAN/GSTIN document type for Verified vs Uploaded
+  const docType = doc.type || doc.documentSubType || doc.selectedType || '';
+  if (isPanOrGstinDocument(docType)) {
     return { class: 'verified', text: 'Verified' };
   }
   
-  // Check if document has valid extracted content
-  if (doc.extractedContent && Object.keys(doc.extractedContent).length > 0 && !doc.extractedContent.error) {
-    return { class: 'verified', text: 'Verified' };
-  }
-  
-  return { class: 'unverified', text: 'Unverified' };
+  // 4. Default to Uploaded for non-PAN/GSTIN documents
+  return { class: "verified", text: "Uploaded" };
+  // return { class: "uploaded", text: "Uploaded" };
 }
 
 function getValidationType(doc) {
@@ -497,24 +549,25 @@ function getValidationType(doc) {
 }
 
 function getPersonalDocumentStatus(doc) {
-  // Handle configuration objects
-  if (doc.data) {
-    if (doc.data.fileName) {
-      return { class: 'verified', text: 'Verified' };
-    }
-    return { class: 'unverified', text: 'Unverified' };
+  // 1. Check for Not Uploaded - no filename in data or direct object
+  const hasFileName = doc.fileName || doc.data?.fileName;
+  if (!hasFileName) {
+    return { class: 'unverified', text: 'Not Uploaded' };
   }
   
-  // Handle direct document objects
-  if (doc.extractedData?.error) {
+  // 2. Check for Mismatch - extraction errors
+  if (doc.extractedData?.error || doc.data?.extractedContent?.error) {
     return { class: 'mismatch', text: 'Mismatch' };
   }
   
-  if (doc.fileName && doc.s3Url) {
+  // 3. Check if PAN/GSTIN document type for Verified vs Uploaded
+  const docType = doc.documentSubType || doc.selectedType || doc.type || '';
+  if (isPanOrGstinDocument(docType)) {
     return { class: 'verified', text: 'Verified' };
   }
   
-  return { class: 'unverified', text: 'Unverified' };
+  // 4. Default to Uploaded for non-PAN/GSTIN documents
+  return { class: 'verified', text: 'Uploaded' };
 }
 
 function getPersonalDocValidationType(doc) {
