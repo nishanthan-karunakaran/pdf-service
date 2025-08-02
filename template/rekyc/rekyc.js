@@ -61,10 +61,12 @@ function setFormData(payload) {
 function disableEditAfterSubmit() {
   const status = data?.status || false;
   if (status) {
-    document.querySelectorAll('input, select, textarea, button').forEach((element) => {
-      element.disabled = true; // Disable all form elements
-    });
-    document.body.style.pointerEvents = 'none'; // Disable all interactions with the body
+    document
+      .querySelectorAll("input, select, textarea, button")
+      .forEach((element) => {
+        element.disabled = true; // Disable all form elements
+      });
+    document.body.style.pointerEvents = "none"; // Disable all interactions with the body
   }
 }
 
@@ -82,17 +84,21 @@ function checkAllReqInputFilled() {
       return;
     }
 
-    const isFilled = inputElement.value?.trim() !== '';
+    const isFilled = inputElement.value?.trim() !== "";
 
     if (!isFilled) {
-      inputElement.style.setProperty('border-bottom', '2px solid red', 'important');
+      inputElement.style.setProperty(
+        "border-bottom",
+        "2px solid red",
+        "important"
+      );
       allInputsFilled = false;
 
       if (!firstEmptyInput) {
         firstEmptyInput = inputElement;
       }
     } else {
-      inputElement.style.removeProperty('border-bottom');
+      inputElement.style.removeProperty("border-bottom");
     }
   });
 
@@ -105,38 +111,45 @@ function checkAllReqInputFilled() {
     });
 
     if (!isChecked) {
-      labelElement.style.setProperty('border-bottom', '2px solid red', 'important');
+      labelElement.style.setProperty(
+        "border-bottom",
+        "2px solid red",
+        "important"
+      );
       allInputsFilled = false;
 
       if (!firstEmptyCheckboxLabel) {
         firstEmptyCheckboxLabel = labelElement;
       }
     } else {
-      labelElement.style.removeProperty('border-bottom');
+      labelElement.style.removeProperty("border-bottom");
     }
   }
 
   if (firstEmptyInput) firstEmptyInput.focus();
   else if (firstEmptyCheckboxLabel)
-    firstEmptyCheckboxLabel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    firstEmptyCheckboxLabel.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
 
   window.parent.postMessage(
     {
-      type: 'CHECK_ALL_REQ_INPUT_FILLED_RESPONSE',
-      source: 'kyc-form',
+      type: "CHECK_ALL_REQ_INPUT_FILLED_RESPONSE",
+      source: "kyc-form",
       isFilled: allInputsFilled,
     },
-    '*',
+    "*"
   );
 }
 
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Tab' && isCheckedAllReqInputFilled) {
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Tab" && isCheckedAllReqInputFilled) {
     const current = document.activeElement;
 
     const unfilledInputs = reqInputs
       .map((id) => document.getElementById(id))
-      .filter((el) => el?.value?.trim() === '');
+      .filter((el) => el?.value?.trim() === "");
 
     if (unfilledInputs.length === 0) return; // All filled, allow default
 
@@ -157,8 +170,10 @@ document.addEventListener('keydown', function (e) {
 function getByPath(obj, pathArray) {
   return pathArray.reduce((acc, key) => {
     if (acc === undefined || acc === null) return undefined;
-    if (typeof key === 'object' && key.findById !== undefined) {
-      return Array.isArray(acc) ? acc.find((item) => item.ausNumber === key.findById) : undefined;
+    if (typeof key === "object" && key.findById !== undefined) {
+      return Array.isArray(acc)
+        ? acc.find((item) => item.ausNumber === key.findById)
+        : undefined;
     }
     return acc[key];
   }, obj);
@@ -168,14 +183,14 @@ function setByPath(obj, pathArray, value) {
   pathArray.reduce((acc, key, index) => {
     if (index === pathArray.length - 1) {
       // Handling special case for finding by ID
-      if (typeof key === 'object' && key.findById !== undefined) {
+      if (typeof key === "object" && key.findById !== undefined) {
         const item = acc.find((item) => item.ausNumber === key.findById);
         if (item) item[pathArray[index + 1]] = value; // Set the value on the specific field
       } else {
         acc[key] = value;
       }
     } else {
-      if (typeof key === 'object' && key.findById !== undefined) {
+      if (typeof key === "object" && key.findById !== undefined) {
         const item = acc.find((item) => item.ausNumber === key.findById);
         if (item) return item;
         else return {};
@@ -191,8 +206,10 @@ function deleteByPath(obj, pathArray) {
   const lastKey = pathArray[pathArray.length - 1];
   const parent = pathArray.slice(0, -1).reduce((acc, key) => {
     if (acc === undefined || acc === null) return undefined;
-    if (typeof key === 'object' && key.findById !== undefined) {
-      return Array.isArray(acc) ? acc.find((item) => item.ausNumber === key.findById) : undefined;
+    if (typeof key === "object" && key.findById !== undefined) {
+      return Array.isArray(acc)
+        ? acc.find((item) => item.ausNumber === key.findById)
+        : undefined;
     }
     return acc[key];
   }, obj);
@@ -204,15 +221,15 @@ function deleteByPath(obj, pathArray) {
 
 function decideColor(pathArray) {
   // Simplified color logic - just use default color for all fields
-  return '#01327E'; // default color
+  return "#01327E"; // default color
 }
 
 function attachInputTracking(inputElement, pathArray) {
   // Set initial color on initial render
   const initialColor = decideColor(pathArray);
-  inputElement.style.setProperty('color', initialColor, 'important');
+  inputElement.style.setProperty("color", initialColor, "important");
 
-  inputElement.addEventListener('input', (e) => {
+  inputElement.addEventListener("input", (e) => {
     const value = e.target.value.trim();
 
     // Update the data directly
@@ -220,13 +237,13 @@ function attachInputTracking(inputElement, pathArray) {
 
     // Keep the color consistent
     const color = decideColor(pathArray);
-    inputElement.style.setProperty('color', color, 'important');
+    inputElement.style.setProperty("color", color, "important");
   });
 }
 
 function camelToTitleCase(input) {
   return input
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // insert space before capital letters
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // insert space before capital letters
     .replace(/^./, (char) => char.toUpperCase()); // capitalize first letter
 }
 // ===== END CONTENT FROM REKYC DATA JS =====
@@ -239,23 +256,23 @@ let isProprietor = false;
 let isRendering = false; // Add flag to prevent multiple renderAll calls
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   setupMessageListeners();
 
   // Add test function to global scope for manual testing
   window.testFormData = function () {
     const testData = {
-      customerId: 'TEST123',
-      entityName: 'Test Company',
-      pan: 'ABCDE1234F',
-      entityType: 'Proprietorship',
+      customerId: "TEST123",
+      entityName: "Test Company",
+      pan: "ABCDE1234F",
+      entityType: "Proprietorship",
       entityDetails: {
         mailingAddress: {
-          line1: '123 Test Street',
-          city: 'Test City',
-          state: 'Test State',
-          country: 'India',
-          pin: '123456',
+          line1: "123 Test Street",
+          city: "Test City",
+          state: "Test State",
+          country: "India",
+          pin: "123456",
         },
       },
     };
@@ -264,33 +281,35 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function setupMessageListeners() {
-  window.addEventListener('message', (event) => {
+  window.addEventListener("message", (event) => {
     const { type, payload } = event.data || {};
 
     switch (type) {
-      case 'SET_FORM_DATA':
-        if (typeof setFormData === 'function') {
+      case "SET_FORM_DATA":
+        if (typeof setFormData === "function") {
           setFormData(payload);
         } else {
-          console.error('rekyc.js: setFormData function not found');
+          console.error("rekyc.js: setFormData function not found");
           console.error(
-            'rekyc.js: Available global functions:',
-            Object.keys(window).filter((key) => typeof window[key] === 'function'),
+            "rekyc.js: Available global functions:",
+            Object.keys(window).filter(
+              (key) => typeof window[key] === "function"
+            )
           );
         }
         break;
-      case 'TRIGGER_SAVE':
-        if (typeof sendSaveData === 'function') {
+      case "TRIGGER_SAVE":
+        if (typeof sendSaveData === "function") {
           sendSaveData();
         } else {
-          console.error('sendSaveData function not found');
+          console.error("sendSaveData function not found");
         }
         break;
-      case 'CHECK_ALL_REQ_INPUT_FILLED':
-        if (typeof checkAllReqInputFilled === 'function') {
+      case "CHECK_ALL_REQ_INPUT_FILLED":
+        if (typeof checkAllReqInputFilled === "function") {
           checkAllReqInputFilled();
         } else {
-          console.error('checkAllReqInputFilled function not found');
+          console.error("checkAllReqInputFilled function not found");
         }
         break;
       default:
@@ -317,50 +336,50 @@ async function renderAll() {
   await annexure1();
   await annexure2();
   // await downloadPDF();
-  console.log('renderAll done');
+  console.log("renderAll done");
 }
 
 function entityBasicInfo() {
   if (!data) data = {};
 
-  const entityCustId = document.getElementById('entityCustId');
-  const entityName = document.getElementById('entityName');
-  const entityPan = document.getElementById('entityPan');
-  const propKartaCustId = document.getElementById('propKartaCustId');
-  const propKartaPan = document.getElementById('propKartaPan');
-  const propKartaCustName = document.getElementById('propKartaCustName');
-  const propKartaName = document.getElementById('propKartaName');
+  const entityCustId = document.getElementById("entityCustId");
+  const entityName = document.getElementById("entityName");
+  const entityPan = document.getElementById("entityPan");
+  const propKartaCustId = document.getElementById("propKartaCustId");
+  const propKartaPan = document.getElementById("propKartaPan");
+  const propKartaCustName = document.getElementById("propKartaCustName");
+  const propKartaName = document.getElementById("propKartaName");
 
-  entityCustId.value = data.customerId || '';
-  entityName.value = data.entityName || '';
-  entityPan.value = data.pan || '';
-  propKartaCustId.value = data.propKartaCustId || '';
-  propKartaPan.value = data.propKartaPan || '';
-  propKartaCustName.value = data.propKartaCustName || '';
-  propKartaName.value = data.propKartaName || '';
+  entityCustId.value = data.custId || "";
+  entityName.value = data.entityName || "";
+  entityPan.value = data.pan || "";
+  propKartaCustId.value = data.propKartaCustId || "";
+  propKartaPan.value = data.propKartaPan || "";
+  propKartaCustName.value = data.propKartaCustName || "";
+  propKartaName.value = data.propKartaName || "";
 
   // Attach tracking
-  attachInputTracking(entityCustId, ['custId']);
-  attachInputTracking(entityName, ['entityName']);
-  attachInputTracking(entityPan, ['pan']);
-  attachInputTracking(propKartaCustId, ['propKartaCustId']);
-  attachInputTracking(propKartaPan, ['propKartaPan']);
-  attachInputTracking(propKartaCustName, ['propKartaCustName']);
-  attachInputTracking(propKartaName, ['propKartaName']);
+  attachInputTracking(entityCustId, ["custId"]);
+  attachInputTracking(entityName, ["entityName"]);
+  attachInputTracking(entityPan, ["pan"]);
+  attachInputTracking(propKartaCustId, ["propKartaCustId"]);
+  attachInputTracking(propKartaPan, ["propKartaPan"]);
+  attachInputTracking(propKartaCustName, ["propKartaCustName"]);
+  attachInputTracking(propKartaName, ["propKartaName"]);
 
-  const dateInputs = document.querySelectorAll('input#date-input');
+  const dateInputs = document.querySelectorAll("input#date-input");
 
   if (dateInputs.length > 0) {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
 
     dateInputs.forEach((input) => {
       input.value = formattedDate;
       input.readOnly = true;
-      input.style.setProperty('color', '#01327E', 'important');
+      input.style.setProperty("color", "#01327E", "important");
     });
   }
 }
@@ -369,14 +388,14 @@ function entityMailingAddress() {
   const mailingAddress = data.mailingAddress || {};
 
   // Checkbox elements
-  const noChangeCheckbox = document.getElementById('noChangeInEmailAddress');
-  const changeCheckbox = document.getElementById('changeInEmailAddress');
+  const noChangeCheckbox = document.getElementById("noChangeInEmailAddress");
+  const changeCheckbox = document.getElementById("changeInEmailAddress");
 
   // Set initial checkbox state
   const updateCheckboxState = () => {
     const type = mailingAddress.addressType;
-    if (noChangeCheckbox) noChangeCheckbox.checked = type === 'noChange';
-    if (changeCheckbox) changeCheckbox.checked = type === 'change';
+    if (noChangeCheckbox) noChangeCheckbox.checked = type === "noChange";
+    if (changeCheckbox) changeCheckbox.checked = type === "change";
   };
 
   updateCheckboxState();
@@ -384,7 +403,7 @@ function entityMailingAddress() {
   if (noChangeCheckbox) {
     noChangeCheckbox.onchange = () => {
       if (noChangeCheckbox.checked) {
-        mailingAddress.addressType = 'noChange';
+        mailingAddress.addressType = "noChange";
         if (changeCheckbox) changeCheckbox.checked = false;
       } else if (!changeCheckbox?.checked) {
         mailingAddress.addressType = null;
@@ -395,7 +414,7 @@ function entityMailingAddress() {
   if (changeCheckbox) {
     changeCheckbox.onchange = () => {
       if (changeCheckbox.checked) {
-        mailingAddress.addressType = 'change';
+        mailingAddress.addressType = "change";
         if (noChangeCheckbox) noChangeCheckbox.checked = false;
       } else if (!noChangeCheckbox?.checked) {
         mailingAddress.addressType = null;
@@ -405,44 +424,44 @@ function entityMailingAddress() {
 
   // Input field binding
   const fields = [
-    'shopBidg',
-    'roadName',
-    'landmark',
-    'city',
-    'pincode',
-    'state',
-    'country',
-    'telOff',
-    'extNo',
-    'faxNo',
-    'telR',
-    'mobNo',
-    'emailID',
+    "shopBidg",
+    "roadName",
+    "landmark",
+    "city",
+    "pincode",
+    "state",
+    "country",
+    "telOff",
+    "extNo",
+    "faxNo",
+    "telR",
+    "mobNo",
+    "emailID",
   ];
 
   const labelKey = {
-    shopBidg: 'buildingName',
-    roadName: 'line1',
-    landmark: 'landmark',
-    city: 'city',
-    pincode: 'pin',
-    state: 'state',
-    country: 'country',
-    telOff: 'telOff',
-    extNo: 'extNo',
-    faxNo: 'faxNo',
-    telR: 'telR',
-    mobNo: 'mobNo',
-    emailID: 'email',
+    shopBidg: "buildingName",
+    roadName: "line1",
+    landmark: "landmark",
+    city: "city",
+    pincode: "pincode",
+    state: "state",
+    country: "country",
+    telOff: "telOff",
+    extNo: "extNo",
+    faxNo: "faxNo",
+    telR: "telR",
+    mobNo: "mobNo",
+    emailID: "email",
   };
 
   fields.forEach((field) => {
     const input = document.getElementById(`entity-mailing-address-${field}`);
     if (!input) return;
 
-    input.value = mailingAddress[labelKey[field]] || '';
+    input.value = mailingAddress[labelKey[field]] || "";
 
-    const pathArray = ['mailingAddress', labelKey[field]];
+    const pathArray = ["mailingAddress", labelKey[field]];
     attachInputTracking(input, pathArray);
 
     // input.oninput = (e) => {
@@ -460,9 +479,11 @@ function entityRegisteredAddress() {
   let registeredAddress = data.registeredAddress;
 
   // Checkbox elements for "Owned", "Rented / Leased" and "Same as Mailing Address"
-  const owned = document.getElementById('entity-contact-address-owned');
-  const rented = document.getElementById('entity-contact-address-rentedLeased');
-  const sameAsMailing = document.getElementById('entity-contact-address-sameAsMailingAddress');
+  const owned = document.getElementById("entity-contact-address-owned");
+  const rented = document.getElementById("entity-contact-address-rentedLeased");
+  const sameAsMailing = document.getElementById(
+    "entity-contact-address-sameAsMailingAddress"
+  );
   sameAsMailing.checked = registeredAddress.sameAsMailings;
 
   sameAsMailing.onchange = () => {
@@ -477,16 +498,24 @@ function entityRegisteredAddress() {
   };
 
   // Input field ids
-  const fields = ['shopBidg', 'roadName', 'landmark', 'city', 'pincode', 'state', 'country'];
+  const fields = [
+    "shopBidg",
+    "roadName",
+    "landmark",
+    "city",
+    "pincode",
+    "state",
+    "country",
+  ];
 
   const labelKey = {
-    shopBidg: 'buildingName',
-    roadName: 'line1',
-    landmark: 'landmark',
-    city: 'city',
-    pincode: 'pin',
-    state: 'state',
-    country: 'country',
+    shopBidg: "buildingName",
+    roadName: "line1",
+    landmark: "landmark",
+    city: "city",
+    pincode: "pincode",
+    state: "state",
+    country: "country",
   };
 
   function updateInputs() {
@@ -494,9 +523,9 @@ function entityRegisteredAddress() {
       const input = document.getElementById(`entity-contact-address-${field}`);
       if (!input) return;
 
-      input.value = registeredAddress[labelKey[field]] || '';
+      input.value = registeredAddress[labelKey[field]] || "";
 
-      const pathArray = ['registeredAddress', labelKey[field]];
+      const pathArray = ["registeredAddress", labelKey[field]];
       attachInputTracking(input, pathArray);
 
       input.oninput = () => {
@@ -512,15 +541,15 @@ function entityRegisteredAddress() {
   // Checkbox logic: Owned vs Rented
   const updateOwnershipCheckboxState = () => {
     const type = registeredAddress.addressType;
-    if (owned) owned.checked = type === 'owned';
-    if (rented) rented.checked = type === 'rented';
+    if (owned) owned.checked = type === "owned";
+    if (rented) rented.checked = type === "rented";
   };
 
   // Handle checkbox changes for "Owned"
   if (owned) {
     owned.onchange = () => {
       if (owned.checked) {
-        registeredAddress.addressType = 'owned';
+        registeredAddress.addressType = "owned";
         if (rented) rented.checked = false;
       } else if (!rented?.checked) {
         registeredAddress.addressType = null; // or leave it empty/null for clarity
@@ -533,7 +562,7 @@ function entityRegisteredAddress() {
   if (rented) {
     rented.onchange = () => {
       if (rented.checked) {
-        registeredAddress.addressType = 'rented';
+        registeredAddress.addressType = "rented";
         if (owned) owned.checked = false;
       } else if (!owned?.checked) {
         registeredAddress.addressType = null;
@@ -586,38 +615,38 @@ function entityRegisteredAddress() {
 
 function entityType() {
   const entityTypes = [
-    { id: 'PROPRIETARY', label: 'Proprietary' },
-    { id: 'SOLE_PROPRIETORSHIP', label: 'Sole Proprietorship' },
-    { id: 'PARTNERSHIP', label: 'Partnership' },
-    { id: 'LLP', label: 'LLP' },
-    { id: 'PRIVATE_LIMITED', label: 'Private Limited' },
-    { id: 'PUBLIC_LIMITED', label: 'Public Limited' },
-    { id: 'HUF', label: 'HUF' },
-    { id: 'GOVERNMENT_BODIES', label: 'Government Bodies' },
-    { id: 'SOCIETY', label: 'Society' },
-    { id: 'TRUST', label: 'Trust' },
-    { id: 'FOREIGN_BODIES', label: 'Foreign Bodies' },
-    { id: 'ASSOCIATION', label: 'Association' },
+    { id: "PROPRIETARY", label: "Proprietary" },
+    { id: "SOLE_PROPRIETORSHIP", label: "Sole Proprietorship" },
+    { id: "PARTNERSHIP", label: "Partnership" },
+    { id: "LLP", label: "LLP" },
+    { id: "PRIVATE_LIMITED", label: "Private Limited" },
+    { id: "PUBLIC_LIMITED", label: "Public Limited" },
+    { id: "HUF", label: "HUF" },
+    { id: "GOVERNMENT_BODIES", label: "Government Bodies" },
+    { id: "SOCIETY", label: "Society" },
+    { id: "TRUST", label: "Trust" },
+    { id: "FOREIGN_BODIES", label: "Foreign Bodies" },
+    { id: "ASSOCIATION", label: "Association" },
     // { id: 'SINGLE_ENTRY', label: 'Single Entry' },
   ];
 
   const selectedEnum = data.entityType;
-  const selector = '#entity-type .checkbox_container';
+  const selector = "#entity-type .checkbox_container";
   const container = document.querySelector(selector);
-  container.innerHTML = '';
+  container.innerHTML = "";
 
   entityTypes.forEach(({ id, label }) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'checkbox_wrapper';
+    const wrapper = document.createElement("div");
+    wrapper.className = "checkbox_wrapper";
 
-    const labelDiv = document.createElement('div');
-    const labelEl = document.createElement('p');
-    labelEl.className = 'text-nowrap';
+    const labelDiv = document.createElement("div");
+    const labelEl = document.createElement("p");
+    labelEl.className = "text-nowrap";
     labelEl.textContent = label;
     labelDiv.appendChild(labelEl);
 
-    const input = document.createElement('input');
-    input.type = 'checkbox';
+    const input = document.createElement("input");
+    input.type = "checkbox";
     input.name = id;
     input.id = id;
     input.checked = id === selectedEnum;
@@ -626,67 +655,88 @@ function entityType() {
     wrapper.appendChild(labelDiv);
     container.appendChild(wrapper);
 
-    input.addEventListener('change', () => {
-      document.querySelectorAll(`${selector} input[type="checkbox"]`).forEach((cb) => {
-        if (cb !== input) cb.checked = false;
-      });
+    input.addEventListener("change", () => {
+      document
+        .querySelectorAll(`${selector} input[type="checkbox"]`)
+        .forEach((cb) => {
+          if (cb !== input) cb.checked = false;
+        });
       data.entityType = input.checked ? id : null;
     });
   });
 }
 
 const entitySubCategories = {
-  pubPvtLtdCompany: ['Financial Services Company', 'PSU', 'Other'],
-  association: ['Business Association', 'Unregistered Association', 'Other Association'],
+  pubPvtLtdCompany: ["Financial Services Company", "PSU", "Other"],
+  association: [
+    "Business Association",
+    "Unregistered Association",
+    "Other Association",
+  ],
   government: [
-    'Central',
-    'State',
-    'Local Authorities',
-    'State Electricity Boards',
-    'Quasi Government Bodies',
-    'Other',
+    "Central",
+    "State",
+    "Local Authorities",
+    "State Electricity Boards",
+    "Quasi Government Bodies",
+    "Other",
   ],
   foreignBodies: [
-    'Foreign Govt',
-    'Project Office',
-    'Branch Office',
-    'Liaison Office',
-    'Consulates / Embassies',
-    'Other',
+    "Foreign Govt",
+    "Project Office",
+    "Branch Office",
+    "Liaison Office",
+    "Consulates / Embassies",
+    "Other",
   ],
   trust: [
-    'Charitable Trust',
-    'Public Trust',
-    'Private Trust',
-    'Religious Trust',
-    'Educational Trust',
-    'PF Trust',
+    "Charitable Trust",
+    "Public Trust",
+    "Private Trust",
+    "Religious Trust",
+    "Educational Trust",
+    "PF Trust",
   ],
-  bank: ['Indian Commercial Bank', 'Foreign Resident Bank', 'Co-Operative Bank'],
-  societies: ['Credit Co-Operative', 'Non Credit Co-Operative', 'Proprietorship'],
+  bank: [
+    "Indian Commercial Bank",
+    "Foreign Resident Bank",
+    "Co-Operative Bank",
+  ],
+  societies: [
+    "Credit Co-Operative",
+    "Non Credit Co-Operative",
+    "Proprietorship",
+  ],
 };
 
 function entitySubCategory() {
-  const container = document.querySelector('#entity-sub-category');
+  const container = document.querySelector("#entity-sub-category");
   if (!container) return;
 
-  console.log('subCategory from backend:', data.subCategory);
+  console.log("subCategory from backend:", data.subCategory);
 
-  const allCheckboxes = container.querySelectorAll('.checkbox_wrapper input[type="checkbox"]');
-  const preSelected = data?.subCategory || '';
-  const [categoryRaw, valueRaw] = preSelected.split(':').map((s) => s.trim());
-  const isOther = categoryRaw.includes('-others');
-  const baseCategory = isOther ? categoryRaw.replace('-others', '') : categoryRaw;
+  const allCheckboxes = container.querySelectorAll(
+    '.checkbox_wrapper input[type="checkbox"]'
+  );
+  const preSelected = data?.subCategory || "";
+  const [categoryRaw, valueRaw] = preSelected.split(":").map((s) => s.trim());
+  const isOther = categoryRaw.includes("-others");
+  const baseCategory = isOther
+    ? categoryRaw.replace("-others", "")
+    : categoryRaw;
 
   allCheckboxes.forEach((checkbox) => {
-    const wrapper = checkbox.closest('.checkbox_wrapper');
-    const textNode = wrapper?.querySelector('.text-nowrap');
+    const wrapper = checkbox.closest(".checkbox_wrapper");
+    const textNode = wrapper?.querySelector(".text-nowrap");
     const inputEl = wrapper.querySelector('input[type="text"]');
-    const checkboxContainer = checkbox.closest('.checkbox_container');
+    const checkboxContainer = checkbox.closest(".checkbox_container");
     const categoryWrapper = checkboxContainer?.parentElement;
 
     const categoryClass = [...(categoryWrapper?.classList || [])].find(
-      (cls) => cls !== 'title' && !cls.includes('container') && !cls.includes('wrapper'),
+      (cls) =>
+        cls !== "title" &&
+        !cls.includes("container") &&
+        !cls.includes("wrapper")
     );
 
     // Preselect
@@ -704,20 +754,22 @@ function entitySubCategory() {
     }
 
     // Add change listener
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) {
             cb.checked = false;
-            const otherInput = cb.closest('.checkbox_wrapper')?.querySelector('input[type="text"]');
-            if (otherInput) otherInput.value = '';
+            const otherInput = cb
+              .closest(".checkbox_wrapper")
+              ?.querySelector('input[type="text"]');
+            if (otherInput) otherInput.value = "";
           }
         });
 
         const isOtherBox = !!inputEl;
         if (isOtherBox) {
           inputEl.focus();
-          inputEl.addEventListener('input', () => {
+          inputEl.addEventListener("input", () => {
             data.subCategory = `${categoryClass}-others: ${inputEl.value.trim()}`;
           });
         } else {
@@ -733,13 +785,15 @@ function entitySubCategory() {
 
     // If user types directly into input
     if (inputEl) {
-      inputEl.addEventListener('input', () => {
+      inputEl.addEventListener("input", () => {
         checkbox.checked = true;
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) {
             cb.checked = false;
-            const otherInput = cb.closest('.checkbox_wrapper')?.querySelector('input[type="text"]');
-            if (otherInput) otherInput.value = '';
+            const otherInput = cb
+              .closest(".checkbox_wrapper")
+              ?.querySelector('input[type="text"]');
+            if (otherInput) otherInput.value = "";
           }
         });
 
@@ -750,40 +804,44 @@ function entitySubCategory() {
 }
 
 function selfEmployedProfessional() {
-  const container = document.querySelector('#self-employeed-professional');
+  const container = document.querySelector("#self-employeed-professional");
   if (!container) return;
 
-  const allCheckboxes = container.querySelectorAll('.checkbox_wrapper input[type="checkbox"]');
-  const allTextInputs = container.querySelectorAll('.checkbox_wrapper input[type="text"]');
+  const allCheckboxes = container.querySelectorAll(
+    '.checkbox_wrapper input[type="checkbox"]'
+  );
+  const allTextInputs = container.querySelectorAll(
+    '.checkbox_wrapper input[type="text"]'
+  );
 
-  const preSelected = data?.selfEmployeedProfessional || '';
+  const preSelected = data?.selfEmployeedProfessional || "";
 
   // Reset initially
   allCheckboxes.forEach((cb) => (cb.checked = false));
-  allTextInputs.forEach((input) => (input.value = ''));
+  allTextInputs.forEach((input) => (input.value = ""));
 
   // Pre-select based on existing data
   allCheckboxes.forEach((checkbox) => {
-    const wrapper = checkbox.closest('.checkbox_wrapper');
-    const label = wrapper?.querySelector('.text-nowrap')?.textContent.trim();
+    const wrapper = checkbox.closest(".checkbox_wrapper");
+    const label = wrapper?.querySelector(".text-nowrap")?.textContent.trim();
     const inputEl = wrapper.querySelector('input[type="text"]');
 
-    if (preSelected.startsWith('Others:') && inputEl) {
+    if (preSelected.startsWith("Others:") && inputEl) {
       checkbox.checked = true;
-      inputEl.value = preSelected.split(':')[1].trim();
+      inputEl.value = preSelected.split(":")[1].trim();
     } else if (label && label === preSelected) {
       checkbox.checked = true;
     }
 
     // Handle checkbox selection
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         // Uncheck all others
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) cb.checked = false;
         });
         allTextInputs.forEach((input) => {
-          if (input !== inputEl) input.value = '';
+          if (input !== inputEl) input.value = "";
         });
 
         if (inputEl) {
@@ -799,14 +857,14 @@ function selfEmployedProfessional() {
 
     // Handle typing in "Others"
     if (inputEl) {
-      inputEl.addEventListener('input', () => {
+      inputEl.addEventListener("input", () => {
         checkbox.checked = true;
 
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) cb.checked = false;
         });
         allTextInputs.forEach((input) => {
-          if (input !== inputEl) input.value = '';
+          if (input !== inputEl) input.value = "";
         });
 
         data.originalData.selfEmployeedProfessional = `Others: ${inputEl.value.trim()}`;
@@ -816,39 +874,43 @@ function selfEmployedProfessional() {
 }
 
 function natureOfBusiness() {
-  const container = document.querySelector('#nature-of-business');
+  const container = document.querySelector("#nature-of-business");
   if (!container) return;
 
-  const allCheckboxes = container.querySelectorAll('.checkbox_wrapper input[type="checkbox"]');
-  const allTextInputs = container.querySelectorAll('.checkbox_wrapper input[type="text"]');
+  const allCheckboxes = container.querySelectorAll(
+    '.checkbox_wrapper input[type="checkbox"]'
+  );
+  const allTextInputs = container.querySelectorAll(
+    '.checkbox_wrapper input[type="text"]'
+  );
 
-  const preSelected = data?.natureOfBusiness || '';
+  const preSelected = data?.natureOfBusiness || "";
 
   // Reset all checkboxes and inputs
   allCheckboxes.forEach((cb) => (cb.checked = false));
-  allTextInputs.forEach((input) => (input.value = ''));
+  allTextInputs.forEach((input) => (input.value = ""));
 
   allCheckboxes.forEach((checkbox) => {
-    const wrapper = checkbox.closest('.checkbox_wrapper');
-    const label = wrapper?.querySelector('.text-nowrap')?.textContent?.trim();
+    const wrapper = checkbox.closest(".checkbox_wrapper");
+    const label = wrapper?.querySelector(".text-nowrap")?.textContent?.trim();
     const inputEl = wrapper.querySelector('input[type="text"]');
 
     // Pre-selection
-    if (preSelected.startsWith('Others:') && inputEl) {
+    if (preSelected.startsWith("Others:") && inputEl) {
       checkbox.checked = true;
-      inputEl.value = preSelected.split(':')[1].trim();
+      inputEl.value = preSelected.split(":")[1].trim();
     } else if (label && label === preSelected) {
       checkbox.checked = true;
     }
 
     // Handle checkbox change
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) cb.checked = false;
         });
         allTextInputs.forEach((input) => {
-          if (input !== inputEl) input.value = '';
+          if (input !== inputEl) input.value = "";
         });
 
         if (inputEl) {
@@ -864,22 +926,22 @@ function natureOfBusiness() {
 
     // Handle "Others" typing
     if (inputEl) {
-      inputEl.addEventListener('input', () => {
+      inputEl.addEventListener("input", () => {
         checkbox.checked = true;
 
         allCheckboxes.forEach((cb) => {
           if (cb !== checkbox) cb.checked = false;
         });
         allTextInputs.forEach((input) => {
-          if (input !== inputEl) input.value = '';
+          if (input !== inputEl) input.value = "";
         });
 
         data.natureOfBusiness = `Others: ${inputEl.value.trim()}`;
       });
 
       // Handle blur: if input is empty, unselect it
-      inputEl.addEventListener('blur', () => {
-        if (inputEl.value.trim() === '') {
+      inputEl.addEventListener("blur", () => {
+        if (inputEl.value.trim() === "") {
           checkbox.checked = false;
           data.natureOfBusiness = null;
         }
@@ -889,23 +951,29 @@ function natureOfBusiness() {
 }
 
 function businessDetails() {
-  const section = document.querySelector('#business-details');
+  const section = document.querySelector("#business-details");
   if (!section) return;
 
-  const detailsOfActivityInput = section.querySelector('#detailsOfActivity');
-  const dateOfIncorporationInput = section.querySelector('#dateOfIncorporation');
-  const annualTurnOverFiguresInput = section.querySelector('#annualTurnOverFigures');
-  const annualTurnOverWordsInput = section.querySelector('#annualTurnOverWords');
-  const importCheckbox = section.querySelector('#import');
-  const exportCheckbox = section.querySelector('#export');
+  const detailsOfActivityInput = section.querySelector("#detailsOfActivity");
+  const dateOfIncorporationInput = section.querySelector(
+    "#dateOfIncorporation"
+  );
+  const annualTurnOverFiguresInput = section.querySelector(
+    "#annualTurnOverFigures"
+  );
+  const annualTurnOverWordsInput = section.querySelector(
+    "#annualTurnOverWords"
+  );
+  const importCheckbox = section.querySelector("#import");
+  const exportCheckbox = section.querySelector("#export");
 
   // Pre-fill if any data exists
   const dataSet = data?.businessDetails || {};
 
-  detailsOfActivityInput.value = dataSet.detailsOfActivity || '';
-  dateOfIncorporationInput.value = dataSet.dateOfIncorporation || '';
-  annualTurnOverFiguresInput.value = dataSet.annualTurnOverFigures || '';
-  annualTurnOverWordsInput.value = dataSet.annualTurnOverWords || '';
+  detailsOfActivityInput.value = dataSet.detailsOfActivity || "";
+  dateOfIncorporationInput.value = dataSet.dateOfIncorporation || "";
+  annualTurnOverFiguresInput.value = dataSet.annualTurnOverFigures || "";
+  annualTurnOverWordsInput.value = dataSet.annualTurnOverWords || "";
 
   // Set color for inputs only
   const inputs = [
@@ -920,98 +988,112 @@ function businessDetails() {
   //   }
   // });
 
-  if (dataSet.involvedIn === 'Import') importCheckbox.checked = true;
-  else if (dataSet.involvedIn === 'Export') exportCheckbox.checked = true;
+  if (dataSet.involvedIn === "Import") importCheckbox.checked = true;
+  else if (dataSet.involvedIn === "Export") exportCheckbox.checked = true;
 
-  attachInputTracking(detailsOfActivityInput, ['businessDetails', 'detailsOfActivity']);
-  attachInputTracking(dateOfIncorporationInput, ['businessDetails', 'dateOfIncorporation']);
-  attachInputTracking(annualTurnOverFiguresInput, ['businessDetails', 'annualTurnOverFigures']);
-  attachInputTracking(annualTurnOverWordsInput, ['businessDetails', 'annualTurnOverWords']);
+  attachInputTracking(detailsOfActivityInput, [
+    "businessDetails",
+    "detailsOfActivity",
+  ]);
+  attachInputTracking(dateOfIncorporationInput, [
+    "businessDetails",
+    "dateOfIncorporation",
+  ]);
+  attachInputTracking(annualTurnOverFiguresInput, [
+    "businessDetails",
+    "annualTurnOverFigures",
+  ]);
+  attachInputTracking(annualTurnOverWordsInput, [
+    "businessDetails",
+    "annualTurnOverWords",
+  ]);
 
   // Checkbox logic (like radio)
-  importCheckbox.addEventListener('change', () => {
+  importCheckbox.addEventListener("change", () => {
     if (importCheckbox.checked) {
       exportCheckbox.checked = false;
-      data.businessDetails.involvedIn = 'Import';
+      data.businessDetails.involvedIn = "Import";
     } else {
-      data.businessDetails.involvedIn = '';
+      data.businessDetails.involvedIn = "";
     }
   });
 
-  exportCheckbox.addEventListener('change', () => {
+  exportCheckbox.addEventListener("change", () => {
     if (exportCheckbox.checked) {
       importCheckbox.checked = false;
-      data.businessDetails.involvedIn = 'Export';
+      data.businessDetails.involvedIn = "Export";
     } else {
-      data.businessDetails.involvedIn = '';
+      data.businessDetails.involvedIn = "";
     }
   });
 }
 function natureOfIndustry() {
   const labels = [
-    'Automobile',
-    'Restaurants',
-    'IT/Software/BPO',
-    'Agricultural Commodities',
-    'Petrol Pump',
-    'Forex Dealer/Bullion',
-    'Media / Entertainment',
-    'Leasing & Hire Purchase',
-    'Contractors',
-    'Chit Funds',
-    'Construction',
-    'Housing Finance',
-    'Oil',
-    'Fisheries/Poultry',
-    'Steel/Hardware',
-    'Fertilizers-Chemicals-Seeds-pesticides',
-    'Consultancy',
-    'Cements/Paints',
-    'Dairy/food processing',
-    'Electronics-computer hardware',
-    'Education',
-    'Engineering Goods',
-    'Shroff',
-    'Issue & Portfolio Management',
-    'NBFC',
-    'Pharmaceuticals',
-    'Textile/Garments',
-    'Hospital/Nursing Home/Clinics',
-    'Retail Jewelry',
-    'Hotels/Resorts',
-    'Printing/publishing',
-    'FMCG',
-    'Furniture/Timber',
-    'Consumer Durables',
-    'Travel/Touring Agency',
-    'Term Lending Institutions',
-    'Broking',
-    'Money Lender',
-    'Marble/Granite',
-    'Auto Finance',
-    'Advt. Agencies',
-    'Transportation / Logistics',
-    'Others',
+    "Automobile",
+    "Restaurants",
+    "IT/Software/BPO",
+    "Agricultural Commodities",
+    "Petrol Pump",
+    "Forex Dealer/Bullion",
+    "Media / Entertainment",
+    "Leasing & Hire Purchase",
+    "Contractors",
+    "Chit Funds",
+    "Construction",
+    "Housing Finance",
+    "Oil",
+    "Fisheries/Poultry",
+    "Steel/Hardware",
+    "Fertilizers-Chemicals-Seeds-pesticides",
+    "Consultancy",
+    "Cements/Paints",
+    "Dairy/food processing",
+    "Electronics-computer hardware",
+    "Education",
+    "Engineering Goods",
+    "Shroff",
+    "Issue & Portfolio Management",
+    "NBFC",
+    "Pharmaceuticals",
+    "Textile/Garments",
+    "Hospital/Nursing Home/Clinics",
+    "Retail Jewelry",
+    "Hotels/Resorts",
+    "Printing/publishing",
+    "FMCG",
+    "Furniture/Timber",
+    "Consumer Durables",
+    "Travel/Touring Agency",
+    "Term Lending Institutions",
+    "Broking",
+    "Money Lender",
+    "Marble/Granite",
+    "Auto Finance",
+    "Advt. Agencies",
+    "Transportation / Logistics",
+    "Others",
   ];
 
-  const container = document.querySelector('#nature-of-industry .checkbox_container');
-  container.innerHTML = ''; // ✅ Prevent duplication
+  const container = document.querySelector(
+    "#nature-of-industry .checkbox_container"
+  );
+  container.innerHTML = ""; // ✅ Prevent duplication
 
-  const selectedValue = data?.natureOfIndustry || '';
+  const selectedValue = data?.natureOfIndustry || "";
   let othersInput = null;
 
   labels.forEach((label, i) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'checkbox_wrapper';
+    const wrapper = document.createElement("div");
+    wrapper.className = "checkbox_wrapper";
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
     checkbox.name = `industry`;
     checkbox.id = `industry-${i}`;
 
-    const labelDiv = document.createElement('div');
-    const labelText = document.createElement('p');
-    labelText.className = 'text-nowrap';
+    const labelDiv = document.createElement("div");
+    const labelText = document.createElement("p");
+    labelText.className = "text-nowrap";
     labelText.textContent = label;
 
     labelDiv.appendChild(labelText);
@@ -1020,7 +1102,8 @@ function natureOfIndustry() {
     container.appendChild(wrapper);
 
     // Prefill logic
-    const isCustomOthers = label === 'Others' && selectedValue && !labels.includes(selectedValue);
+    const isCustomOthers =
+      label === "Others" && selectedValue && !labels.includes(selectedValue);
     if (selectedValue === label || isCustomOthers) {
       checkbox.checked = true;
       if (isCustomOthers) {
@@ -1028,26 +1111,28 @@ function natureOfIndustry() {
       }
     }
 
-    checkbox.addEventListener('change', function () {
-      const allCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+    checkbox.addEventListener("change", function () {
+      const allCheckboxes = container.querySelectorAll(
+        'input[type="checkbox"]'
+      );
       allCheckboxes.forEach((cb) => {
         if (cb !== checkbox) cb.checked = false;
       });
 
-      if (othersInput && label !== 'Others') {
+      if (othersInput && label !== "Others") {
         othersInput.remove();
         othersInput = null;
       }
 
       if (checkbox.checked) {
-        if (label === 'Others') {
+        if (label === "Others") {
           createAndAttachOthersInput(wrapper);
-          data.natureOfIndustry = '';
+          data.natureOfIndustry = "";
         } else {
           data.natureOfIndustry = label;
         }
       } else {
-        data.originalData.natureOfIndustry = '';
+        data.originalData.natureOfIndustry = "";
         if (othersInput) {
           othersInput.remove();
           othersInput = null;
@@ -1056,26 +1141,26 @@ function natureOfIndustry() {
     });
   });
 
-  function createAndAttachOthersInput(wrapper, prefill = '') {
-    othersInput = document.createElement('input');
-    othersInput.type = 'text';
-    othersInput.placeholder = 'Please specify...';
-    othersInput.className = 'others-industry-input';
-    othersInput.style.marginTop = '4px';
+  function createAndAttachOthersInput(wrapper, prefill = "") {
+    othersInput = document.createElement("input");
+    othersInput.type = "text";
+    othersInput.placeholder = "Please specify...";
+    othersInput.className = "others-industry-input";
+    othersInput.style.marginTop = "4px";
     othersInput.value = prefill;
 
     wrapper.appendChild(othersInput);
     othersInput.focus();
 
-    othersInput.addEventListener('input', () => {
+    othersInput.addEventListener("input", () => {
       data.originalData.natureOfIndustry = othersInput.value.trim();
     });
 
-    othersInput.addEventListener('blur', () => {
+    othersInput.addEventListener("blur", () => {
       if (!othersInput.value.trim()) {
         const othersCheckbox = wrapper.querySelector('input[type="checkbox"]');
         if (othersCheckbox) othersCheckbox.checked = false;
-        data.originalData.natureOfIndustry = '';
+        data.originalData.natureOfIndustry = "";
         othersInput.remove();
         othersInput = null;
       }
@@ -1084,21 +1169,22 @@ function natureOfIndustry() {
 }
 
 function entityProofDeclaration() {
-  const section = document.querySelector('#entity-proof-declaration');
+  const section = document.querySelector("#entity-proof-declaration");
 
-  const inputs = section.querySelectorAll('input');
+  const inputs = section.querySelectorAll("input");
 
   // Destructure and assign fields from your data object
-  const { identityProof = '' } = data.entityProofDeclaration || {};
+  const { identityProof = "" } = data.entityProofDeclaration || {};
 
   const panDoc = data.pan;
   const coiDoc = data.cin;
-  const addressProofDoc = data?.originalData?.entityDetails?.documents?.entityAddressProof;
+  const addressProofDoc =
+    data?.originalData?.entityDetails?.documents?.entityAddressProof;
 
   // Prefill values
-  inputs[0].value = `PAN - ${panDoc}` || '';
-  inputs[1].value = `CIN - ${coiDoc}` || '';
-  inputs[2].value = camelToTitleCase(addressProofDoc?.selectedType || '') || '';
+  inputs[0].value = `PAN - ${panDoc}` || "";
+  inputs[1].value = `CIN - ${coiDoc}` || "";
+  inputs[2].value = camelToTitleCase(addressProofDoc?.selectedType || "") || "";
   inputs[3].value = identityProof;
 
   // Clear input fields if they are empty
@@ -1106,28 +1192,28 @@ function entityProofDeclaration() {
     input.disabled = true;
   });
 
-  const date = document.querySelector('#date-input');
+  const date = document.querySelector("#date-input");
   if (date) {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
     date.value = `${day}-${month}-${year}`;
     date.readOnly = true;
-    date.style.setProperty('color', '#01327E', 'important');
+    date.style.setProperty("color", "#01327E", "important");
   }
 
   // Handle image sources for authorized signatories
-  const signatoryImages = section.querySelectorAll('.aus_sign_img');
+  const signatoryImages = section.querySelectorAll(".aus_sign_img");
 
   signatoryImages.forEach((imgContainer, index) => {
     const signatoryData = data.authorizedSignatories?.[index];
     if (signatoryData) {
-      const imageUrl = signatoryData?.personalDetails?.documents?.signature?.url || '';
+      const imageUrl = `data:image/jpeg;base64,${signatoryData.personalDocuments.specimenSignature.base64}`;
 
-      if (imageUrl) {
+      if (signatoryData.personalDocuments.specimenSignature.base64) {
         // If URL exists, create the img element and set the src attribute
-        const img = document.createElement('img');
+        const img = document.createElement("img");
         img.src = imageUrl;
         img.alt = `Signature of Authorized Signatory ${index + 1}`; // Alt text for better accessibility
 
@@ -1142,19 +1228,19 @@ function extendedAnnexure() {
   if (!data?.extendedAnnexure) {
     data.extendedAnnexure = {
       basicDetails: {
-        entityName: data?.entityName || '',
-        entityCustId: data?.custId || '',
-        aofNo: data?.aofNo || '',
+        entityName: data?.entityName || "",
+        entityCustId: data?.custId || "",
+        aofNo: data?.aofNo || "",
       },
       docEntity: {
-        cin: data?.cin || '',
-        reg: '',
-        trust: '',
-        moa: '',
+        cin: data?.cin || "",
+        reg: "",
+        trust: "",
+        moa: "",
       },
       mailAddress: {
-        cin: data?.cin || '',
-        reg: '',
+        cin: data?.cin || "",
+        reg: "",
       },
     };
   }
@@ -1162,45 +1248,45 @@ function extendedAnnexure() {
   const extended = data.extendedAnnexure;
 
   const basicLabelKey = {
-    aofNo: 'aofNo',
-    nameOfEntity: 'entityName',
-    custId: 'entityCustId',
+    aofNo: "aofNo",
+    nameOfEntity: "entityName",
+    custId: "entityCustId",
   };
 
   const docEntityLabel = {
-    coi: 'cin',
-    reg: 'reg',
-    trust: 'trust',
-    moa: 'moa',
+    coi: "cin",
+    reg: "reg",
+    trust: "trust",
+    moa: "moa",
   };
 
   const mailAddressLabel = {
-    coi: 'cin',
-    reg: 'reg',
+    coi: "cin",
+    reg: "reg",
   };
 
   // Correct input color handling based on original vs edited
   const basicDetailsInputColor = (input, key) => {
-    const originalValue = extended.basicDetails[basicLabelKey[key]] || '';
-    const currentValue = input.value || '';
+    const originalValue = extended.basicDetails[basicLabelKey[key]] || "";
+    const currentValue = input.value || "";
 
     if (originalValue !== currentValue) {
-      input.style.setProperty('color', '#FF8754', 'important'); // modified
+      input.style.setProperty("color", "#FF8754", "important"); // modified
     } else {
-      input.style.setProperty('color', '#01327E', 'important'); // untouched
+      input.style.setProperty("color", "#01327E", "important"); // untouched
     }
   };
 
   // Prefill + bind basic details
-  const basicFields = ['date', 'aofNo', 'nameOfEntity', 'custId'];
+  const basicFields = ["date", "aofNo", "nameOfEntity", "custId"];
   basicFields.forEach((key) => {
     const input = document.getElementById(`basic-${key}`);
     if (input) {
-      input.value = extended.basicDetails[basicLabelKey[key]] || '';
+      input.value = extended.basicDetails[basicLabelKey[key]] || "";
 
       basicDetailsInputColor(input, key); // Set initial color
 
-      input.addEventListener('input', () => {
+      input.addEventListener("input", () => {
         extended.basicDetails[basicLabelKey[key]] = input.value;
 
         basicDetailsInputColor(input, key); // Check color again after typing
@@ -1209,25 +1295,25 @@ function extendedAnnexure() {
   });
 
   // Prefill + bind document entity
-  const docEntityFields = ['coi', 'reg', 'trust', 'moa'];
+  const docEntityFields = ["coi", "reg", "trust", "moa"];
   docEntityFields.forEach((key) => {
     const input = document.getElementById(`docEntity-${key}`);
     const check = document.getElementById(`docEntity-${key}-check`);
 
     const labelKey = docEntityLabel[key];
 
-    if (typeof extended.docEntity[labelKey] !== 'undefined') {
+    if (typeof extended.docEntity[labelKey] !== "undefined") {
       if (check) check.checked = !!extended.docEntity[labelKey];
-      if (input && typeof extended.docEntity[labelKey] === 'string') {
+      if (input && typeof extended.docEntity[labelKey] === "string") {
         input.value = extended.docEntity[labelKey];
       }
     }
 
     if (check) {
-      check.addEventListener('change', () => {
+      check.addEventListener("change", () => {
         if (!check.checked) {
-          extended.docEntity[labelKey] = '';
-          if (input) input.value = '';
+          extended.docEntity[labelKey] = "";
+          if (input) input.value = "";
         } else {
           extended.docEntity[labelKey] = input ? input.value || true : true;
         }
@@ -1235,7 +1321,7 @@ function extendedAnnexure() {
     }
 
     if (input) {
-      input.addEventListener('input', () => {
+      input.addEventListener("input", () => {
         if (check?.checked) {
           extended.docEntity[labelKey] = input.value;
         }
@@ -1244,7 +1330,7 @@ function extendedAnnexure() {
   });
 
   // Prefill + bind mailing address
-  const mailFields = ['coi', 'reg', 'other'];
+  const mailFields = ["coi", "reg", "other"];
   mailFields.forEach((key) => {
     const input = document.getElementById(`mailAddress-${key}`);
     const check = document.getElementById(`mailAddress-${key}-check`);
@@ -1252,23 +1338,23 @@ function extendedAnnexure() {
     const labelKey = mailAddressLabel[key];
 
     if (check) check.checked = !!extended.mailAddress[labelKey];
-    if (input && typeof extended.mailAddress[labelKey] === 'string') {
+    if (input && typeof extended.mailAddress[labelKey] === "string") {
       input.value = extended.mailAddress[labelKey];
     }
 
     if (check) {
-      check.addEventListener('change', () => {
+      check.addEventListener("change", () => {
         if (!check.checked) {
-          extended.mailAddress[labelKey] = '';
-          if (input) input.value = '';
+          extended.mailAddress[labelKey] = "";
+          if (input) input.value = "";
         } else {
-          extended.mailAddress[labelKey] = input ? input.value : '';
+          extended.mailAddress[labelKey] = input ? input.value : "";
         }
       });
     }
 
     if (input) {
-      input.addEventListener('input', () => {
+      input.addEventListener("input", () => {
         if (check?.checked) {
           extended.mailAddress[labelKey] = input.value;
         }
@@ -1278,36 +1364,38 @@ function extendedAnnexure() {
 }
 
 function boDetailsTable() {
+  data.beneficialOwners = data?.beneficialOwners || [{}, {}];
+
   const boDetailsTemp = data?.beneficialOwners || [{}, {}]; // Assuming data.boDetails contains the details
   const boDetails = [...boDetailsTemp];
   // const boDetails = [...boDetailsTemp, ...boDetailsTemp, ...boDetailsTemp, ...boDetailsTemp];
-  const container = document.querySelector('#extended-annexure');
-  const detailsContainer = document.querySelector('.bo_details');
+  const container = document.querySelector("#extended-annexure");
+  const detailsContainer = document.querySelector(".bo_details");
   // detailsContainer.innerHTML = '';
 
-  const boContainer = document.createElement('div');
-  boContainer.classList.add('bo_container');
+  const boContainer = document.createElement("div");
+  boContainer.classList.add("bo_container");
 
   const boLength = boDetails.length || 2;
 
   // Loop for half the length of boDetails
   for (let i = 0; i < Math.ceil(boLength / 2); i += 2) {
-    const boWrapper = document.createElement('div');
-    boWrapper.classList.add('bo_wrapper');
+    const boWrapper = document.createElement("div");
+    boWrapper.classList.add("bo_wrapper");
 
     // Define columns with descriptions and keys
     const columns = [
-      { label: 'Name of Beneficial Owner', key: 'name' },
-      { label: 'Address - Line', key: 'addressLine' },
-      { label: 'Address - City', key: 'city' },
-      { label: 'Address - State', key: 'state' },
-      { label: 'Address - Country', key: 'country' },
-      { label: 'Address - Pincode', key: 'pinCode' },
+      { label: "Name of Beneficial Owner", key: "name" },
+      { label: "Address - Line", key: "addressLine" },
+      { label: "Address - City", key: "city" },
+      { label: "Address - State", key: "state" },
+      { label: "Address - Country", key: "country" },
+      { label: "Address - Pincode", key: "pinCode" },
     ];
 
     // Helper to get deep value safely (if needed later)
     function getValueByPath(obj, path) {
-      return path.split('.').reduce((acc, part) => acc?.[part], obj);
+      return path.split(".").reduce((acc, part) => acc?.[part], obj);
     }
 
     // Loop over BOs
@@ -1315,52 +1403,66 @@ function boDetailsTable() {
     const nextBo = boDetails[i + 1] || {};
 
     columns.forEach((col) => {
-      const row = document.createElement('div');
-      row.classList.add('row');
+      const row = document.createElement("div");
+      row.classList.add("row");
 
-      const descDiv = document.createElement('div');
-      descDiv.classList.add('desc');
-      const label = document.createElement('p');
+      const descDiv = document.createElement("div");
+      descDiv.classList.add("desc");
+      const label = document.createElement("p");
       label.innerText = col.label;
       descDiv.appendChild(label);
 
       // Handle input1 (currentBO)
-      const valueDiv1 = document.createElement('div');
-      valueDiv1.classList.add('value');
-      const input1 = document.createElement('input');
-      input1.type = 'text';
-      input1.value = currentBo?.[col.key] || '';
+      const valueDiv1 = document.createElement("div");
+      valueDiv1.classList.add("value");
+      const input1 = document.createElement("input");
+      input1.type = "text";
+      input1.value = currentBo?.[col.key] || "";
 
       // Attach manual input tracking for input1
-      input1.addEventListener('input', (e) => {
+      input1.addEventListener("input", (e) => {
         const value = e.target.value.trim();
         const trueOriginalValue1 =
-          data.beneficialOwners?.find((bo) => bo.boId === currentBo.boId)?.[col.key] ?? '';
+          data.beneficialOwners?.find((bo) => bo.boId === currentBo.boId)?.[
+            col.key
+          ] ?? "";
 
         // Handle editedData for input1
-        if (trueOriginalValue1 === '') {
+        if (trueOriginalValue1 === "") {
           if (value) {
-            setByPath(data, ['beneficialOwners', currentBo.boId, col.key], 'own');
+            setByPath(
+              data,
+              ["beneficialOwners", currentBo.boId, col.key],
+              "own"
+            );
           } else {
-            deleteByPath(data, ['beneficialOwners', currentBo.boId, col.key]);
+            deleteByPath(data, ["beneficialOwners", currentBo.boId, col.key]);
           }
         } else {
           if (value !== trueOriginalValue1) {
-            setByPath(data, ['beneficialOwners', currentBo.boId, col.key], 'modified');
+            setByPath(
+              data,
+              ["beneficialOwners", currentBo.boId, col.key],
+              "modified"
+            );
           } else {
-            deleteByPath(data, ['beneficialOwners', currentBo.boId, col.key]);
+            deleteByPath(data, ["beneficialOwners", currentBo.boId, col.key]);
           }
         }
 
         // Set color for input1
-        if (trueOriginalValue1 === '') {
-          input1.style.setProperty('color', value ? '#4b4b4d' : '#4b4b4d', 'important'); // Grey if Own
+        if (trueOriginalValue1 === "") {
+          input1.style.setProperty(
+            "color",
+            value ? "#4b4b4d" : "#4b4b4d",
+            "important"
+          ); // Grey if Own
         } else {
           // Check if the value is different from the original value and update color
           input1.style.setProperty(
-            'color',
-            value !== trueOriginalValue1 ? '#D97706' : '#01327E',
-            'important',
+            "color",
+            value !== trueOriginalValue1 ? "#D97706" : "#01327E",
+            "important"
           ); // Orange if Modified, Blue if Same
         }
 
@@ -1368,7 +1470,9 @@ function boDetailsTable() {
         if (currentBo) currentBo[col.key] = value;
 
         // Update originalData for input1
-        const boIndex = data.beneficialOwners.findIndex((bo) => bo.boId === currentBo.boId);
+        const boIndex = data.beneficialOwners.findIndex(
+          (bo) => bo.boId === currentBo.boId
+        );
         if (boIndex !== -1) {
           data.beneficialOwners[boIndex][col.key] = value;
         }
@@ -1376,63 +1480,84 @@ function boDetailsTable() {
 
       // Set Initial Color for input1
       const trueOriginalValue1 =
-        data.beneficialOwners?.find((bo) => bo.boId === currentBo.boId)?.[col.key] ?? '';
-      const trueEditedValue1 = data.beneficialOwners?.[currentBo.boId]?.[col.key] ?? ''; // Get the value from editedData
+        data.beneficialOwners?.find((bo) => bo.boId === currentBo.boId)?.[
+          col.key
+        ] ?? "";
+      const trueEditedValue1 =
+        data.beneficialOwners?.[currentBo.boId]?.[col.key] ?? ""; // Get the value from editedData
 
       // Adjust logic: If value is modified in `editedData`, color should be orange (modified)
-      if (trueEditedValue1 === 'modified') {
-        input1.style.setProperty('color', '#D97706', 'important'); // Orange if Modified
-      } else if (trueOriginalValue1 === '') {
-        input1.style.setProperty('color', input1.value ? '#4b4b4d' : '#4b4b4d', 'important'); // Grey if Own
+      if (trueEditedValue1 === "modified") {
+        input1.style.setProperty("color", "#D97706", "important"); // Orange if Modified
+      } else if (trueOriginalValue1 === "") {
+        input1.style.setProperty(
+          "color",
+          input1.value ? "#4b4b4d" : "#4b4b4d",
+          "important"
+        ); // Grey if Own
       } else {
         input1.style.setProperty(
-          'color',
-          input1.value !== trueOriginalValue1 ? '#D97706' : '#01327E',
-          'important',
+          "color",
+          input1.value !== trueOriginalValue1 ? "#D97706" : "#01327E",
+          "important"
         ); // Orange if Modified, Blue if Same
       }
 
       valueDiv1.appendChild(input1);
 
       // Handle input2 (nextBo)
-      const valueDiv2 = document.createElement('div');
-      valueDiv2.classList.add('value');
-      const input2 = document.createElement('input');
-      input2.type = 'text';
+      const valueDiv2 = document.createElement("div");
+      valueDiv2.classList.add("value");
+      const input2 = document.createElement("input");
+      input2.type = "text";
 
       if (nextBo) {
-        input2.value = nextBo[col.key] || '';
+        input2.value = nextBo[col.key] || "";
 
         // Attach manual input tracking for input2
-        input2.addEventListener('input', (e) => {
+        input2.addEventListener("input", (e) => {
           const value = e.target.value.trim();
           const trueOriginalValue2 =
-            data.beneficialOwners?.find((bo) => bo.boId === nextBo.boId)?.[col.key] ?? '';
+            data.beneficialOwners?.find((bo) => bo.boId === nextBo.boId)?.[
+              col.key
+            ] ?? "";
 
           // Handle editedData for input2
-          if (trueOriginalValue2 === '') {
+          if (trueOriginalValue2 === "") {
             if (value) {
-              setByPath(data, ['beneficialOwners', nextBo.boId, col.key], 'own');
+              setByPath(
+                data,
+                ["beneficialOwners", nextBo.boId, col.key],
+                "own"
+              );
             } else {
-              deleteByPath(data, ['beneficialOwners', nextBo.boId, col.key]);
+              deleteByPath(data, ["beneficialOwners", nextBo.boId, col.key]);
             }
           } else {
             if (value !== trueOriginalValue2) {
-              setByPath(data, ['beneficialOwners', nextBo.boId, col.key], 'modified');
+              setByPath(
+                data,
+                ["beneficialOwners", nextBo.boId, col.key],
+                "modified"
+              );
             } else {
-              deleteByPath(data, ['beneficialOwners', nextBo.boId, col.key]);
+              deleteByPath(data, ["beneficialOwners", nextBo.boId, col.key]);
             }
           }
 
           // Set color for input2
-          if (trueOriginalValue2 === '') {
-            input2.style.setProperty('color', value ? '#4b4b4d' : '#4b4b4d', 'important'); // Grey if Own
+          if (trueOriginalValue2 === "") {
+            input2.style.setProperty(
+              "color",
+              value ? "#4b4b4d" : "#4b4b4d",
+              "important"
+            ); // Grey if Own
           } else {
             // Check if the value is different from the original value and update color
             input2.style.setProperty(
-              'color',
-              value !== trueOriginalValue2 ? '#D97706' : '#01327E',
-              'important',
+              "color",
+              value !== trueOriginalValue2 ? "#D97706" : "#01327E",
+              "important"
             ); // Orange if Modified, Blue if Same
           }
 
@@ -1440,7 +1565,9 @@ function boDetailsTable() {
           if (nextBo) nextBo[col.key] = value;
 
           // Update originalData for input2
-          const boIndex2 = data.beneficialOwners.findIndex((bo) => bo.boId === nextBo.boId);
+          const boIndex2 = data.beneficialOwners.findIndex(
+            (bo) => bo.boId === nextBo.boId
+          );
           if (boIndex2 !== -1) {
             data.beneficialOwners[boIndex2][col.key] = value;
           }
@@ -1451,19 +1578,26 @@ function boDetailsTable() {
 
       // Set Initial Color for input2
       const trueOriginalValue2 =
-        data.beneficialOwners?.find((bo) => bo.boId === nextBo.boId)?.[col.key] ?? '';
-      const trueEditedValue2 = data.beneficialOwners?.[nextBo.boId]?.[col.key] ?? ''; // Get the value from editedData
+        data.beneficialOwners?.find((bo) => bo.boId === nextBo.boId)?.[
+          col.key
+        ] ?? "";
+      const trueEditedValue2 =
+        data.beneficialOwners?.[nextBo.boId]?.[col.key] ?? ""; // Get the value from editedData
 
       // Adjust logic: If value is modified in `editedData`, color should be orange (modified)
-      if (trueEditedValue2 === 'modified') {
-        input2.style.setProperty('color', '#D97706', 'important'); // Orange if Modified
-      } else if (trueOriginalValue2 === '') {
-        input2.style.setProperty('color', input2.value ? '#4b4b4d' : '#4b4b4d', 'important'); // Grey if Own
+      if (trueEditedValue2 === "modified") {
+        input2.style.setProperty("color", "#D97706", "important"); // Orange if Modified
+      } else if (trueOriginalValue2 === "") {
+        input2.style.setProperty(
+          "color",
+          input2.value ? "#4b4b4d" : "#4b4b4d",
+          "important"
+        ); // Grey if Own
       } else {
         input2.style.setProperty(
-          'color',
-          input2.value !== trueOriginalValue2 ? '#D97706' : '#01327E',
-          'important',
+          "color",
+          input2.value !== trueOriginalValue2 ? "#D97706" : "#01327E",
+          "important"
         ); // Orange if Modified, Blue if Same
       }
 
@@ -1483,18 +1617,18 @@ function boDetailsTable() {
       // Append boContainer to the detailsContainer
       detailsContainer.appendChild(boContainer);
     } else {
-      const pdfPage = document.createElement('div');
-      pdfPage.classList.add('pdf-page');
+      const pdfPage = document.createElement("div");
+      pdfPage.classList.add("pdf-page");
 
-      const section = document.createElement('section');
-      section.classList.add('form-section');
-      section.id = 'extended-annexure';
+      const section = document.createElement("section");
+      section.classList.add("form-section");
+      section.id = "extended-annexure";
 
-      const boDetailsDiv = document.createElement('div');
-      boDetailsDiv.classList.add('bo_details');
+      const boDetailsDiv = document.createElement("div");
+      boDetailsDiv.classList.add("bo_details");
 
-      const boContainerDiv = document.createElement('div');
-      boContainerDiv.classList.add('bo_container');
+      const boContainerDiv = document.createElement("div");
+      boContainerDiv.classList.add("bo_container");
 
       boContainerDiv.appendChild(boWrapper);
       boDetailsDiv.appendChild(boContainerDiv);
@@ -1510,123 +1644,137 @@ function ausDetails() {
   // document.querySelectorAll('.ausDetail').forEach((el) => el.remove());
   const ausData = data?.authorizedSignatories || [];
   const labels = [
-    'Name of the Authorised Signatory',
+    "Name of the Authorised Signatory",
     "Father's name",
-    'Proof of Identity',
-    'Proof of Address',
-    'Address - Line',
-    'Address - City',
-    'Address - State',
-    'Address - Country',
-    'Address - Pincode',
-    'Signature',
-    'Photograph',
+    "Proof of Identity",
+    "Proof of Address",
+    "Address - Line",
+    "Address - City",
+    "Address - State",
+    "Address - Country",
+    "Address - Pincode",
+    "Signature",
+    "Photograph",
   ];
   const labelKey = {
-    'Name of the Authorised Signatory': 'fullName',
-    "Father's name": 'fatherName',
-    'Proof of Identity': 'documents.identityProof.selectedType',
-    'Proof of Address': 'documents.addressProof.selectedType',
-    'Address - Line': 'addressLine',
-    'Address - City': 'city',
-    'Address - State': 'state',
-    'Address - Country': 'country',
-    'Address - Pincode': 'pin',
-    Signature: 'signature',
-    Photograph: 'photo',
+    "Name of the Authorised Signatory": "fullName",
+    "Father's name": "fatherName",
+    "Proof of Identity": "personalDocuments.proofOfIdentity.selectedType",
+    "Proof of Address": "personalDocuments.proofOfAddress.selectedType",
+    "Address - Line": "line1",
+    "Address - City": "city",
+    "Address - State": "state",
+    "Address - Country": "country",
+    "Address - Pincode": "pincode",
+    Signature: "signature",
+    Photograph: "photo",
   };
 
-  const toKey = (label) => label.toLowerCase().replace(/[^a-z0-9]/gi, '');
+  const toKey = (label) => label.toLowerCase().replace(/[^a-z0-9]/gi, "");
 
   function getValueByPath(obj, path) {
-    return path.split('.').reduce((acc, part) => acc?.[part], obj);
+    return path.split(".").reduce((acc, part) => acc?.[part], obj);
   }
 
   for (let i = 0; i < ausData.length; i += 2) {
     const aus1 = ausData[i];
     const aus2 = ausData[i + 1];
 
-    const pdfPage = document.createElement('div');
-    pdfPage.classList.add('pdf-page', 'ausDetail');
+    const pdfPage = document.createElement("div");
+    pdfPage.classList.add("pdf-page", "ausDetail");
 
-    const section = document.createElement('section');
-    section.id = 'aus-details';
-    section.classList.add('form_section');
+    const section = document.createElement("section");
+    section.id = "aus-details";
+    section.classList.add("form_section");
 
-    const header = document.createElement('div');
-    header.classList.add('header', 'text-center');
-    const h4 = document.createElement('h4');
-    h4.classList.add('text-black');
-    h4.textContent = 'Authorised Signatories details';
-    const p = document.createElement('p');
-    p.textContent = '{All fields are mandatory}';
+    const header = document.createElement("div");
+    header.classList.add("header", "text-center");
+    const h4 = document.createElement("h4");
+    h4.classList.add("text-black");
+    h4.textContent = "Authorised Signatories details";
+    const p = document.createElement("p");
+    p.textContent = "{All fields are mandatory}";
     header.appendChild(h4);
     header.appendChild(p);
     section.appendChild(header);
 
-    const container = document.createElement('div');
-    container.classList.add('aus_container');
+    const container = document.createElement("div");
+    container.classList.add("aus_container");
 
-    const table = document.createElement('table');
-    table.classList.add('table');
-    const tbody = document.createElement('tbody');
+    const table = document.createElement("table");
+    table.classList.add("table");
+    const tbody = document.createElement("tbody");
 
     labels.forEach((label, rowIndex) => {
-      const tr = document.createElement('tr');
+      const tr = document.createElement("tr");
 
       // Label Column
-      const labelTd = document.createElement('td');
+      const labelTd = document.createElement("td");
       labelTd.innerHTML = `<p>${label}</p>`;
       tr.appendChild(labelTd);
-      tr.style.minHeight = '60px';
+      tr.style.minHeight = "60px";
 
       tr.appendChild(createAusCell(aus1, label, rowIndex));
       tr.appendChild(createAusCell(aus2, label, rowIndex));
 
       // Function to create an input or static media display
       function createAusCell(ausData, label, rowIndex) {
-        const td = document.createElement('td');
-        const div = document.createElement('div');
+        const td = document.createElement("td");
+        const div = document.createElement("div");
 
         if (rowIndex === 9) {
           // Signature row
-          div.className = 'sign_container';
+          div.className = "sign_container";
 
-          const wrapper = document.createElement('div');
-          wrapper.className = 'sign_wrapper';
+          const wrapper = document.createElement("div");
+          wrapper.className = "sign_wrapper";
 
-          if (ausData?.personalDocuments?.signature?.s3Url) {
-            const img = document.createElement('img');
-            img.src = ausData.personalDetails.documents.signature.url;
+          const isHaveSignature =
+            ausData?.personalDocuments?.specimenSignature?.base64 ||
+            ausData?.personalDocuments?.specimenSignature?.url;
+
+          if (isHaveSignature) {
+            const img = document.createElement("img");
+            img.src =
+              `data:image/jpeg;base64,${ausData.personalDocuments.specimenSignature.base64}` ||
+              ausData.personalDocuments.specimenSignature.url;
             wrapper.appendChild(img);
           }
 
           div.appendChild(wrapper);
         } else if (rowIndex === 10) {
           // Photo row
-          div.className = 'photo_container';
+          div.className = "photo_container";
 
-          const wrapper = document.createElement('div');
-          wrapper.className = 'photo_wrapper';
+          const wrapper = document.createElement("div");
+          wrapper.className = "photo_wrapper";
 
-          if (ausData?.personalDocuments?.photograph?.s3Url) {
-            const img = document.createElement('img');
-            img.src = ausData.personalDetails.documents.photograph.url;
+          const isHavePhoto =
+            ausData?.personalDocuments?.photograph?.base64 ||
+            ausData?.personalDocuments?.photograph?.url;
+
+          console.log(isHavePhoto);
+
+          if (isHavePhoto) {
+            const img = document.createElement("img");
+            img.src =
+              `data:image/jpeg;base64,${ausData.personalDocuments.photograph.base64}` ||
+              ausData.personalDocuments.photograph.url;
             wrapper.appendChild(img);
           }
 
           div.appendChild(wrapper);
         } else {
           // Input field for other rows01327E
-          const input = document.createElement('input');
-          input.type = 'text';
+          const input = document.createElement("input");
+          input.type = "text";
 
           const key = labelKey[label];
 
           // Capture true original value once (important)
-          const trueOriginalValue = getValueByPath(ausData, key) ?? '';
+          const trueOriginalValue = getValueByPath(ausData, key) ?? "";
 
-          if (label === 'Proof of Identity' || label === 'Proof of Address') {
+          if (label === "Proof of Identity" || label === "Proof of Address") {
             // const selectedType = ausData?.personalDetailspersonalDocuments[key]?.type || '';
             // const docNumber =
             //   ausData?.personalDetailspersonalDocuments[key]?.number || 'Number not extracted';
@@ -1640,25 +1788,25 @@ function ausDetails() {
 
           function updateColor(value) {
             const editedAus = data.authorizedSignatories?.find(
-              (aus) => aus?.ausNumber === ausData?.ausNumber,
+              (aus) => aus?.ausNumber === ausData?.ausNumber
             );
 
             // Add null check for editedAus
             const status = editedAus?.[key];
 
-            if (status === 'own') {
-              input.style.setProperty('color', '#4B4B4D', 'important'); // Grey for own
-            } else if (status === 'modified') {
-              input.style.setProperty('color', '#D97706', 'important'); // Orange for modified
+            if (status === "own") {
+              input.style.setProperty("color", "#4B4B4D", "important"); // Grey for own
+            } else if (status === "modified") {
+              input.style.setProperty("color", "#D97706", "important"); // Orange for modified
             } else {
-              input.style.setProperty('color', '#01327E', 'important'); // Blue if not edited
+              input.style.setProperty("color", "#01327E", "important"); // Blue if not edited
             }
           }
 
           // Set initial color
           updateColor(input.value.trim());
 
-          input.addEventListener('input', (e) => {
+          input.addEventListener("input", (e) => {
             const value = e.target.value.trim();
 
             // 1. Update color immediately
@@ -1666,7 +1814,7 @@ function ausDetails() {
 
             // 2. Update manually
             let editedAus = data.authorizedSignatories?.find(
-              (aus) => aus.ausNumber === ausData.ausNumber,
+              (aus) => aus.ausNumber === ausData.ausNumber
             );
 
             if (!editedAus) {
@@ -1675,15 +1823,15 @@ function ausDetails() {
               data.authorizedSignatories.push(editedAus);
             }
 
-            if (trueOriginalValue === '') {
+            if (trueOriginalValue === "") {
               if (value) {
-                editedAus[key] = 'own';
+                editedAus[key] = "own";
               } else {
                 delete editedAus[key];
               }
             } else {
               if (value !== trueOriginalValue) {
-                editedAus[key] = 'modified';
+                editedAus[key] = "modified";
               } else {
                 delete editedAus[key];
               }
@@ -1700,7 +1848,7 @@ function ausDetails() {
             // 3. Update both ausData and originalData
             if (ausData) {
               ausData = ausData || {};
-              const keyParts = key.split('.');
+              const keyParts = key.split(".");
               let current = ausData;
 
               for (let i = 0; i < keyParts.length - 1; i++) {
@@ -1713,14 +1861,14 @@ function ausDetails() {
             }
 
             const ausIndex = data.authorizedSignatories?.findIndex(
-              (aus) => aus.ausNumber === ausData?.ausNumber,
+              (aus) => aus.ausNumber === ausData?.ausNumber
             );
 
             if (ausIndex !== -1) {
               let originalAus = data.authorizedSignatories[ausIndex];
               originalAus = originalAus || {};
 
-              const keyParts = key.split('.');
+              const keyParts = key.split(".");
               let current = originalAus;
 
               for (let i = 0; i < keyParts.length - 1; i++) {
@@ -1747,53 +1895,64 @@ function ausDetails() {
     container.appendChild(table);
     section.appendChild(container);
     pdfPage.appendChild(section);
-    const extended = document.querySelector('.extended-declaration-div');
+    const extended = document.querySelector(".extended-declaration-div");
     extended.parentNode.insertBefore(pdfPage, extended);
   }
 }
 
 function extendedDeclaration() {
-  const section = document.querySelector('#extended-declaration');
+  const section = document.querySelector("#extended-declaration");
 
-  const aofNo = document.querySelector('#aof-no');
-  aofNo.value = data?.aofNo || '';
-  attachInputTracking(aofNo, ['entityDetails', 'aofNo']);
+  const aofNo = document.querySelector("#aof-no");
+  aofNo.value = data?.aofNo || "";
+  attachInputTracking(aofNo, ["entityDetails", "aofNo"]);
 
-  const entityName = section.querySelector('#entityName');
-  entityName.value = data?.entityName || '';
-  attachInputTracking(entityName, ['entityName']);
+  const entityName = section.querySelector("#entityName");
+  entityName.value = data?.entityName || "";
+  attachInputTracking(entityName, ["entityName"]);
 
-  const custId = section.querySelector('#custId');
-  custId.value = data?.customerId || '';
-  attachInputTracking(custId, ['custId']);
+  const custId = section.querySelector("#custId");
+  custId.value = data?.customerId || "";
+  attachInputTracking(custId, ["custId"]);
 
-  // if (!data?.originalData?.entityDetails?.country) {
-  //   data.originalData.entityDetails.country = entityDetails?.registeredOfficeAddress?.country;
-  // }
+  const countryCin = section.querySelector("#countryCin");
+  countryCin.value = data?.registeredAddress?.country || "";
+  attachInputTracking(countryCin, ["entityDetails", "country"]);
 
-  const countryCin = section.querySelector('#countryCin');
-  countryCin.value = data?.registeredOfficeAddress?.country || '';
-  attachInputTracking(countryCin, ['entityDetails', 'country']);
+  const cityCin = section.querySelector("#cityCin");
+  cityCin.value = data?.registeredAddress?.city || "";
+  attachInputTracking(cityCin, ["entityDetails", "cityCin"]);
 
-  // if (!data?.originalData?.entityDetails?.city) {
-  //   data.originalData.entityDetails.city = entityDetails?.registeredOfficeAddress?.city;
-  // }
+  const commencementBusiness = section.querySelector("#commencementBusiness");
+  commencementBusiness.value = data?.commencementBusiness || "";
+  attachInputTracking(commencementBusiness, [
+    "entityDetails",
+    "commencementBusiness",
+  ]);
 
-  const cityCin = section.querySelector('#cityCin');
-  cityCin.value = data?.registeredOfficeAddress?.city || '';
-  attachInputTracking(cityCin, ['entityDetails', 'cityCin']);
-
-  handleEitherCheckbox('taxableOutsideIndia', 'nonTaxableOutsideIndia', 'taxOutsideIndia');
-  handleEitherCheckbox('usResident', 'nonUSResident', 'usResident');
-  handleEitherCheckbox('ownedByMany', 'nonOwnedByMany', 'ownedBy');
-  handleEitherCheckbox('financialInstitution', 'nonFinancialInstitution', 'financialInstitution');
-  handleEitherCheckbox('publicTraded', 'nonPublicTraded', 'publicTraded');
-  handleEitherCheckbox('relatedPublicTraded', 'nonRelatedPublicTraded', 'relatedPublicTraded');
-  handleEitherCheckbox('subsidiary', 'controlled', 'relationNature');
   handleEitherCheckbox(
-    'ultimateBeneficialOwner',
-    'nonUltimateBeneficialOwner',
-    'ultimateBeneficialOwner',
+    "taxableOutsideIndia",
+    "nonTaxableOutsideIndia",
+    "taxOutsideIndia"
+  );
+  handleEitherCheckbox("usResident", "nonUSResident", "usResident");
+  handleEitherCheckbox("ownedByMany", "nonOwnedByMany", "ownedBy");
+  handleEitherCheckbox(
+    "financialInstitution",
+    "nonFinancialInstitution",
+    "financialInstitution"
+  );
+  handleEitherCheckbox("publicTraded", "nonPublicTraded", "publicTraded");
+  handleEitherCheckbox(
+    "relatedPublicTraded",
+    "nonRelatedPublicTraded",
+    "relatedPublicTraded"
+  );
+  handleEitherCheckbox("subsidiary", "controlled", "relationNature");
+  handleEitherCheckbox(
+    "ultimateBeneficialOwner",
+    "nonUltimateBeneficialOwner",
+    "ultimateBeneficialOwner"
   );
 
   function handleEitherCheckbox(cb1, cb2, cbKey) {
@@ -1829,17 +1988,17 @@ function extendedDeclaration() {
     }
   }
 
-  const stockExchange = section.querySelector('#stockExchange');
-  stockExchange.value = data?.stockExchange || '';
-  attachInputTracking(stockExchange, ['stockExchange']);
+  const stockExchange = section.querySelector("#stockExchange");
+  stockExchange.value = data?.stockExchange || "";
+  attachInputTracking(stockExchange, ["stockExchange"]);
 
-  const listedCompany = section.querySelector('#listedCompany');
-  listedCompany.value = data?.listedCompany || '';
-  attachInputTracking(listedCompany, ['listedCompany']);
+  const listedCompany = section.querySelector("#listedCompany");
+  listedCompany.value = data?.listedCompany || "";
+  attachInputTracking(listedCompany, ["listedCompany"]);
 
-  const listedStockExchange = section.querySelector('#listedStockExchange');
-  listedStockExchange.value = data?.listedStockExchange || '';
-  attachInputTracking(listedStockExchange, ['listedStockExchange']);
+  const listedStockExchange = section.querySelector("#listedStockExchange");
+  listedStockExchange.value = data?.listedStockExchange || "";
+  attachInputTracking(listedStockExchange, ["listedStockExchange"]);
 }
 
 function fatcaCRS() {
@@ -1847,15 +2006,15 @@ function fatcaCRS() {
     data.fatcaCRS = {};
   }
 
-  const section = document.querySelector('#fatca-crs');
+  const section = document.querySelector("#fatca-crs");
 
-  const name = section.querySelector('#name');
-  name.value = data?.fatcaCRS?.name || '';
-  attachInputTracking(name, ['fatcaCRS', 'name']);
+  const name = section.querySelector("#name");
+  name.value = data?.fatcaCRS?.name || "";
+  attachInputTracking(name, ["fatcaCRS", "name"]);
 
-  const designation = section.querySelector('#designation');
-  designation.value = data?.fatcaCRS?.designation || '';
-  attachInputTracking(designation, ['fatcaCRS', 'designation']);
+  const designation = section.querySelector("#designation");
+  designation.value = data?.fatcaCRS?.designation || "";
+  attachInputTracking(designation, ["fatcaCRS", "designation"]);
 }
 
 function annexure1() {
@@ -1870,17 +2029,22 @@ function annexure1() {
     data.annexure1 = {};
   }
 
-  const section = document.querySelector('#annexure-1');
+  const section = document.querySelector("#annexure-1");
 
-  const entityName = section.querySelector('#entityName');
-  entityName.value = data.entityName || '';
-  attachInputTracking(entityName, ['entityName']);
+  const entityName = section.querySelector("#entityName");
+  entityName.value = data.entityName || "";
+  attachInputTracking(entityName, ["entityName"]);
 
-  const aofNo = section.querySelector('#aof-no');
-  aofNo.value = data?.aofNo || '';
-  attachInputTracking(aofNo, ['aofNo']);
+  const aofNo = section.querySelector("#aof-no");
+  aofNo.value = data?.aofNo || "";
+  attachInputTracking(aofNo, ["aofNo"]);
 
-  const checkBoxIds = ['cin', 'globalEntityIdentificationNo', 'tin', 'other-checkbox'];
+  const checkBoxIds = [
+    "cin",
+    "globalEntityIdentificationNo",
+    "tin",
+    "other-checkbox",
+  ];
 
   checkBoxIds.forEach((id) => {
     const checkbox = section.querySelector(`#${id}`);
@@ -1890,7 +2054,7 @@ function annexure1() {
     checkbox.checked = !!data.annexure1?.[id];
 
     // Add change event listener
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         // Uncheck all other checkboxes
         checkBoxIds.forEach((otherId) => {
@@ -1907,7 +2071,7 @@ function annexure1() {
 
         data.annexure1[id] = true;
 
-        if (id === 'other-checkbox') {
+        if (id === "other-checkbox") {
           otherInput.focus();
         }
       } else {
@@ -1916,27 +2080,32 @@ function annexure1() {
           data.annexure1[id] = false;
         }
 
-        if (id !== 'other-checkbox') {
+        if (id !== "other-checkbox") {
           otherInput.focus();
         }
       }
     });
   });
 
-  const otherInput = section.querySelector('#other');
-  otherInput.value = data.annexure1.identificationNoOtherInput || '';
-  attachInputTracking(otherInput, ['annexure1', 'identificationNoOtherInput']);
+  const otherInput = section.querySelector("#other");
+  otherInput.value = data.annexure1.identificationNoOtherInput || "";
+  attachInputTracking(otherInput, ["annexure1", "identificationNoOtherInput"]);
 
-  const idNo = section.querySelector('#idNo');
-  idNo.value = data.annexure1.idNo || '';
-  attachInputTracking(idNo, ['annexure1', 'idNo']);
+  const idNo = section.querySelector("#idNo");
+  idNo.value = data.annexure1.idNo || "";
+  attachInputTracking(idNo, ["annexure1", "idNo"]);
 
-  const idNoIssuingCountry = section.querySelector('#idNoIssuingCountry');
-  idNoIssuingCountry.value = data.annexure1.idNoIssuingCountry || '';
-  attachInputTracking(idNoIssuingCountry, ['annexure1', 'idNoIssuingCountry']);
+  const idNoIssuingCountry = section.querySelector("#idNoIssuingCountry");
+  idNoIssuingCountry.value = data.annexure1.idNoIssuingCountry || "";
+  attachInputTracking(idNoIssuingCountry, ["annexure1", "idNoIssuingCountry"]);
 
-  const addressCheckBoxIds = ['taxAddressReg', 'taxAddressMail'];
-  const addressCheckBoxType = ['resiBusiness', 'residential', 'business', 'regOffice'];
+  const addressCheckBoxIds = ["taxAddressReg", "taxAddressMail"];
+  const addressCheckBoxType = [
+    "resiBusiness",
+    "residential",
+    "business",
+    "regOffice",
+  ];
 
   // Ensure only one checkbox from addressCheckBoxIds can be selected
   addressCheckBoxIds.forEach((id) => {
@@ -1946,7 +2115,7 @@ function annexure1() {
     // Set initial state based on data.originalData.annexure1
     checkbox.checked = !!data.annexure1?.[id];
 
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         addressCheckBoxIds.forEach((otherId) => {
           if (otherId !== id) {
@@ -1974,7 +2143,7 @@ function annexure1() {
     // Set initial state based on data.originalData.annexure1
     checkbox.checked = !!data.annexure1?.[id];
 
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         addressCheckBoxType.forEach((otherId) => {
           if (otherId !== id) {
@@ -1994,11 +2163,14 @@ function annexure1() {
     });
   });
 
-  const entityExcemptionCode = section.querySelector('#entityExcemptionCode');
-  entityExcemptionCode.value = data.annexure1.entityExcemptionCode || '';
-  attachInputTracking(entityExcemptionCode, ['annexure1', 'entityExcemptionCode']);
+  const entityExcemptionCode = section.querySelector("#entityExcemptionCode");
+  entityExcemptionCode.value = data.annexure1.entityExcemptionCode || "";
+  attachInputTracking(entityExcemptionCode, [
+    "annexure1",
+    "entityExcemptionCode",
+  ]);
 
-  const personType = ['usPerson', 'nonUSPerson'];
+  const personType = ["usPerson", "nonUSPerson"];
 
   // Ensure only one checkbox from personType can be selected
   personType.forEach((id) => {
@@ -2008,7 +2180,7 @@ function annexure1() {
     // Set initial state based on data.originalData.annexure1
     checkbox.checked = !!data.annexure1?.[id];
 
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         personType.forEach((otherId) => {
           if (otherId !== id) {
@@ -2022,10 +2194,10 @@ function annexure1() {
         data.annexure1[id] = true;
 
         // Disable and clear entityExcemptionCode if usPerson is selected
-        if (id === 'usPerson') {
-          entityExcemptionCode.value = '';
+        if (id === "usPerson") {
+          entityExcemptionCode.value = "";
           entityExcemptionCode.disabled = true;
-          data.annexure1.entityExcemptionCode = '';
+          data.annexure1.entityExcemptionCode = "";
         } else {
           entityExcemptionCode.disabled = false;
         }
@@ -2037,7 +2209,7 @@ function annexure1() {
     });
   });
 
-  const institutionType = ['financialInstitution', 'directReporting'];
+  const institutionType = ["financialInstitution", "directReporting"];
 
   // Ensure only one checkbox from institutionType can be selected
   institutionType.forEach((id) => {
@@ -2047,7 +2219,7 @@ function annexure1() {
     // Set initial state based on data.originalData.extendedDeclaration
     checkbox.checked = !!data.annexure1?.[id];
 
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         institutionType.forEach((otherId) => {
           if (otherId !== id) {
@@ -2073,7 +2245,7 @@ function annexure2() {
     // document.querySelector('.annexure-2-div-1')?.remove();
     // console.log('a 2 removed');
 
-    const pages = document.querySelectorAll('.pdf-page');
+    const pages = document.querySelectorAll(".pdf-page");
     const annexurePages = [pages[pages.length - 1], pages[pages.length - 2]];
     // console.log('annexurePages', annexurePages);
     // annexurePages?.slice(-2)?.forEach((el) => el?.remove());
@@ -2081,42 +2253,44 @@ function annexure2() {
     return;
   }
 
-  const boLength = data?.beneficialOwners.length;
+  const boLength = data?.beneficialOwners?.length || 2;
 
   const fields = {
-    'Name of the controlling person (mandatory)': 'name',
-    'Entity Type (mandatory)': 'entityType',
-    'Controlling person type code (mandatory)': 'controllingPersonTypeCode',
-    'Date of birth (mandatory)': 'dob',
-    'PAN (mandatory)': 'pan',
-    'Customer ID (if applicable)': 'custId',
-    'Percentage of ownership/capital/profits(mandatory)': 'sharePercentage',
-    'Place / City of Birth (mandatory)': 'placeOfBirth',
-    'Country of Birth (mandatory)': 'countryOfBirth',
-    'Gender (mandatory)': 'gender',
-    'Marital Status (mandatory)': 'maritalStatus',
-    'Father’s name (mandatory)': 'fatherName',
-    'Nationality (Please specify country) (mandatory)': 'nationality',
-    'Aadhaar No (Optional)': 'aadhaarNo',
-    'Mother’s Name (optional)': 'motherName',
-    'Maiden Name (if any)': 'maidenName',
-    'Country of tax residence* (Mandatory)': 'taxResidenceCountry',
-    'Tax identification number (or functional equivalent of country other than India) %':
-      'taxIdNumber',
-    'Tax identification number type (for country other than India)': 'taxIdType',
-    'Address - Line (Mandatory)': 'addressLine',
-    'Address - City (Mandatory)': 'city',
-    'Address - State (Mandatory)': 'state',
-    'Address - Country (Mandatory)': 'country',
-    'Address - Pin Code (Mandatory)': 'pin',
-    'Address Type for above (Mandatory)': 'addressType',
-    'Mobile Number (Mandatory)': 'mobileNo',
-    'Telephone Number (with ISD &STD code)': 'teleNo',
-    'Occupation Type (Mandatory)': 'occupationType',
-    'Proof of Identity (Mandatory)': 'identityProof',
-    'Proof of Address (Mandatory)': 'addressProof',
-    'Spouse’s name (Optional)': 'spouseName',
-    'Recent colour Photographs (Photo is Non- mandatory for Account opening)': 'photograph',
+    "Name of the controlling person (mandatory)": "name",
+    "Entity Type (mandatory)": "entityType",
+    "Controlling person type code (mandatory)": "controllingPersonTypeCode",
+    "Date of birth (mandatory)": "dob",
+    "PAN (mandatory)": "pan",
+    "Customer ID (if applicable)": "custId",
+    "Percentage of ownership/capital/profits(mandatory)": "sharePercentage",
+    "Place / City of Birth (mandatory)": "placeOfBirth",
+    "Country of Birth (mandatory)": "countryOfBirth",
+    "Gender (mandatory)": "gender",
+    "Marital Status (mandatory)": "maritalStatus",
+    "Father’s name (mandatory)": "fatherName",
+    "Nationality (Please specify country) (mandatory)": "nationality",
+    "Aadhaar No (Optional)": "aadhaarNo",
+    "Mother’s Name (optional)": "motherName",
+    "Maiden Name (if any)": "maidenName",
+    "Country of tax residence* (Mandatory)": "taxResidenceCountry",
+    "Tax identification number (or functional equivalent of country other than India) %":
+      "taxIdNumber",
+    "Tax identification number type (for country other than India)":
+      "taxIdType",
+    "Address - Line (Mandatory)": "addressLine",
+    "Address - City (Mandatory)": "city",
+    "Address - State (Mandatory)": "state",
+    "Address - Country (Mandatory)": "country",
+    "Address - Pin Code (Mandatory)": "pincode",
+    "Address Type for above (Mandatory)": "addressType",
+    "Mobile Number (Mandatory)": "mobileNo",
+    "Telephone Number (with ISD &STD code)": "teleNo",
+    "Occupation Type (Mandatory)": "occupationType",
+    "Proof of Identity (Mandatory)": "identityProof",
+    "Proof of Address (Mandatory)": "addressProof",
+    "Spouse’s name (Optional)": "spouseName",
+    "Recent colour Photographs (Photo is Non- mandatory for Account opening)":
+      "photograph",
   };
 
   for (let index = 0; index < boLength; index += 2) {
@@ -2125,63 +2299,68 @@ function annexure2() {
     let content = null;
     if (index < 2) {
       wholeContainer = document.querySelector(`.annexure-2-div-${index + 1}`);
-      section = document.querySelector('#annexure-2');
-      content = section.querySelector('.content');
+      section = document.querySelector("#annexure-2");
+      content = section.querySelector(".content");
     } else {
-      wholeContainer = document.createElement('div');
+      wholeContainer = document.createElement("div");
       wholeContainer.classList.add(`annexure-2-div-${index + 1}`);
-      wholeContainer.classList.add('pdf-page');
-      section = document.createElement('section');
-      section.id = '#annexure-2';
-      content = document.createElement('div');
-      content.classList.add('content');
+      wholeContainer.classList.add("pdf-page");
+      section = document.createElement("section");
+      section.id = "#annexure-2";
+      content = document.createElement("div");
+      content.classList.add("content");
     }
-    const table = document.createElement('table');
-    table.classList.add('bo-annexure-table');
-    const tbody = document.createElement('tbody');
+    const table = document.createElement("table");
+    table.classList.add("bo-annexure-table");
+    const tbody = document.createElement("tbody");
 
-    const newPage = document.createElement('div');
-    newPage.classList.add('pdf-page');
-    const newSection = document.createElement('div');
-    newSection.classList.add('#annexure-2');
-    const table2 = document.createElement('table');
-    table2.classList.add('bo-annexure-table');
-    const tbody2 = document.createElement('tbody');
+    const newPage = document.createElement("div");
+    newPage.classList.add("pdf-page");
+    const newSection = document.createElement("div");
+    newSection.classList.add("#annexure-2");
+    const table2 = document.createElement("table");
+    table2.classList.add("bo-annexure-table");
+    const tbody2 = document.createElement("tbody");
 
     Object.entries(fields).map(([key, value], i) => {
-      const tr = document.createElement('tr');
+      const tr = document.createElement("tr");
 
-      const siNo = document.createElement('td');
-      siNo.classList.add('text-black');
+      const siNo = document.createElement("td");
+      siNo.classList.add("text-black");
       siNo.innerText = i + 1;
 
-      const rowField = document.createElement('td');
-      rowField.classList.add('text-black');
+      const rowField = document.createElement("td");
+      rowField.classList.add("text-black");
       rowField.innerText = key;
 
-      const bo1 = document.createElement('td');
-      const innerDiv1 = document.createElement('div');
-      const input1 = document.createElement('input');
-      input1.style.width = '96%';
-      input1.type = 'text';
-      input1.value = (data?.beneficialOwners[index] && data?.beneficialOwners[index][value]) || '';
+      const bo1 = document.createElement("td");
+      const innerDiv1 = document.createElement("div");
+      const input1 = document.createElement("input");
+      input1.style.width = "96%";
+      input1.type = "text";
+      input1.value =
+        (data?.beneficialOwners[index] &&
+          data?.beneficialOwners[index][value]) ||
+        "";
 
-      input1.addEventListener('input', () => {
+      input1.addEventListener("input", () => {
         data.beneficialOwners[index][value] = input1.value.trim();
       });
 
       innerDiv1.appendChild(input1);
       bo1.append(innerDiv1);
 
-      const bo2 = document.createElement('td');
-      const innerDiv2 = document.createElement('div');
-      const input2 = document.createElement('input');
-      input2.style.width = '96%';
-      input2.type = 'text';
+      const bo2 = document.createElement("td");
+      const innerDiv2 = document.createElement("div");
+      const input2 = document.createElement("input");
+      input2.style.width = "96%";
+      input2.type = "text";
       input2.value =
-        (data?.beneficialOwners[index + 1] && data?.beneficialOwners[index + 1][value]) || '';
+        (data?.beneficialOwners[index + 1] &&
+          data?.beneficialOwners[index + 1][value]) ||
+        "";
 
-      input2.addEventListener('input', () => {
+      input2.addEventListener("input", () => {
         data.beneficialOwners[index + 1][value] = input2.value.trim();
       });
 
@@ -2207,7 +2386,10 @@ function annexure2() {
     newPage.appendChild(newSection);
 
     if (index < 2) {
-      wholeContainer.parentNode.insertBefore(newPage, wholeContainer.nextSibling);
+      wholeContainer.parentNode.insertBefore(
+        newPage,
+        wholeContainer.nextSibling
+      );
     } else {
       section.appendChild(content);
       wholeContainer.appendChild(section);
@@ -2219,10 +2401,10 @@ function annexure2() {
 }
 
 function downloadPDF() {
-  fetch('http://localhost:3000/generate-pdf', {
-    method: 'POST',
+  fetch("http://localhost:3000/generate-pdf", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json', // Set the content type to JSON
+      "Content-Type": "application/json", // Set the content type to JSON
     },
     body: JSON.stringify({ data }), // Convert the data object to a JSON string
   })
@@ -2230,18 +2412,18 @@ function downloadPDF() {
       if (response.ok) {
         return response.blob(); // Get the PDF file as a Blob
       }
-      throw new Error('Failed to generate PDF');
+      throw new Error("Failed to generate PDF");
     })
     .then((blob) => {
       // Create a link element to download the file
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       const url = window.URL.createObjectURL(blob);
       link.href = url;
-      link.download = 'report.pdf'; // Set the file name for the download
+      link.download = "report.pdf"; // Set the file name for the download
       link.click(); // Trigger the download
       window.URL.revokeObjectURL(url); // Clean up the object URL
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error("Error:", error);
     });
 }
