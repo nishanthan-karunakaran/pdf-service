@@ -211,9 +211,31 @@ function createPersonSection(person, index) {
     // Director header
     const directorHeader = document.createElement('div');
     directorHeader.className = 'director-header';
+    
     const directorTitle = document.createElement('h4');
     directorTitle.textContent = `${person.type} ${index}`;
-    directorHeader.appendChild(directorTitle);
+    
+    // Add verification labels to header if verified
+    if (person.data.isVerifiedByUser === true) {
+      const verificationContainer = document.createElement('div');
+      verificationContainer.className = 'header-verification-labels';
+      
+      const dinPanLabel = document.createElement('div');
+      dinPanLabel.className = 'verification-label-small';
+      dinPanLabel.innerHTML = `DIN PAN Match <span class="tick-icon">✓</span>`;
+      
+      const dinAadhaarLabel = document.createElement('div');
+      dinAadhaarLabel.className = 'verification-label-small';
+      dinAadhaarLabel.innerHTML = `DIN Aadhaar Match <span class="tick-icon">✓</span>`;
+      
+      verificationContainer.appendChild(dinPanLabel);
+      verificationContainer.appendChild(dinAadhaarLabel);
+      
+      directorHeader.appendChild(directorTitle);
+      directorHeader.appendChild(verificationContainer);
+    } else {
+      directorHeader.appendChild(directorTitle);
+    }
     
     // Director details container
     const directorDetails = document.createElement('div');
@@ -286,6 +308,8 @@ function createPersonSection(person, index) {
     directorDetails.appendChild(group1);
     directorDetails.appendChild(group2);
     directorDetails.appendChild(group3);
+    
+
     
     // Clear the section and append new structure
     section.innerHTML = '';
