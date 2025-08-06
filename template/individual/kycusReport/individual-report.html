@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Individual KYC Report</title>
+  <link rel="stylesheet" href="./individual-report.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <!-- Page 1: Individual Details and Documents -->
+  <div class="page page-1">
+    <!-- Header for Page 1 -->
+    <div class="page-header">
+      <h1 id="reportHeader">KYC - INDIVIDUAL</h1>
+    </div>
+
+    <!-- Main Content for Page 1 -->
+    <div class="page-content">
+      <!-- Individual Information Section -->
+      <div class="individual-section">
+        <div class="individual-header">
+          <h2 id="individualName"></h2>
+        </div>
+        
+        <!-- PAN and Application ID in same row -->
+        <div class="parallel-row">
+          <div class="detail-row">
+            <span class="label">PAN Number</span>
+            <span id="panNumber"></span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Application Id</span>
+            <span id="applicationId"></span>
+          </div>
+        </div>
+        
+        <!-- Content grid for remaining details -->
+        <div class="content-grid">
+          <div class="individual-details">
+            <div class="detail-row">
+              <span class="label">Date of Birth</span>
+              <span id="dateOfBirth"></span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Email</span>
+              <span id="email"></span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Mobile</span>
+              <span id="mobile"></span>
+            </div>
+          </div>
+          
+          <div class="date-details">
+            <div class="detail-row">
+              <span class="label">Requested on</span>
+              <span id="requestedOn"></span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Completed on</span>
+              <span id="completedOn"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual Documents Section -->
+      <div class="section">
+        <h3>Personal Documents</h3>
+        <table class="files-table" id="individualFilesTable">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th>Status</th>
+              <th>Validation</th>
+              <th>Verified on</th>
+            </tr>
+          </thead>
+          <tbody id="individualFilesBody">
+            <!-- Dynamic content will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+
+    <!-- Footer for Page 1 -->
+    <div class="page-footer">
+      Powered by <strong>Ebitaus</strong>
+    </div>
+  </div>
+
+  <script src="./individual-sampleData.js"></script>
+  <script src="./individual-report.js"></script>
+</body>
+</html>

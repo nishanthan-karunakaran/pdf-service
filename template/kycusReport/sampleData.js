@@ -1,645 +1,435 @@
 const data = {
-    _id: { timestamp: 1753865859, date: "2025-07-30T08:57:39.000+00:00" },
-    applicationId: "KYCAPP00129",
-    entityName: "Ebitaus Private Limited",
-    entityType: "PARTNERSHIP",
-    cin: "",
-    llpin: "",
-    pan: "AAAFM1234B",
-    reason: "KYC Application",
-    authorizedSignatories: [
-      {
-        ausId: "a5c9216c-0edf-489e-997c-833f869c75c7",
-        fullName: "BORUGULA SURESH",
-        emailAddress: "monesh.babu@ebitaus.com",
-        phoneNumber: "9874563210",
-        personalDocuments: {
-          proofOfAddress: {
-            data: { extractedContent: {} },
-            options: [
-              {
-                text: "Electricity bill (Not more than 2 months)",
-                value: "electricity",
-                key: "electricity",
-              },
-              {
-                text: "Internet bill (Not more than 2 months)",
-                value: "internet",
-                key: "internet",
-              },
-              {
-                text: "Gas bill (Not more than 2 months)",
-                value: "gas",
-                key: "gas",
-              },
-              {
-                text: "Landline bill (Not more than 2 months)",
-                value: "landline",
-                key: "landline",
-              },
-              { text: "Bank Statement", value: "bank", key: "bank" },
-              {
-                text: "Rental Agreement/Lease Agreement",
-                value: "rental",
-                key: "rental",
-              },
-              {
-                text: "Property Tax Receipt",
-                value: "property",
-                key: "property",
-              },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-address",
-                key: "aadhaar-address",
-              },
-            ],
-            selectedType: "electricity",
-            label: "Select Proof of address",
-            type: "proofOfAddress",
-            acceptedTypes: "pdf, jpg, jpeg, png",
+  _id: "68762915af70c4864d40fe52",
+  applicationId: "KYCAPP00063",
+  entityName: "Ebitaus Private Limited",
+  entityType: "PRIVATE_LIMITED",
+  cin: "U62099TN2023PTC158659",
+  pan: "CIXPN9255M",
+  authorizedSignatories: [
+    {
+      ausId: "5d363a13-1648-4a81-9650-86e95e385888",
+      fullName: "BORUGULA SURESH",
+      emailAddress: "monesh.babu@ebitaus.com",
+      phoneNumber: "9987654321",
+      personalDocuments: {
+        proofOfIdentity: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          proofOfIdentity: {
-            documentSubType: "personalpan",
-            fileName: "P PAN.jpg",
-            s3Url:
-              "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/personaldocs/BORUGULA SURESH-a5c9216c-0edf-489e-997c-833f869c75c7/P_PAN.jpg",
-            verificationData: {},
-            extractedData: { error: "Person name mismatch with PAN Card" },
-            selectedType: "personalpan",
-          },
+          options: [
+            { text: "Pan Card", value: "personalpan", key: "personalpan" },
+            { text: "Aadhar Card", value: "aadhar", key: "aadhar" },
+            { text: "Driving Licence", value: "driving", key: "driving" },
+            { text: "Passport", value: "passport", key: "passport" },
+          ],
+          selectedType: "personalpan",
+          label: "Select Proof of identity",
         },
-      },
-    ],
-    partners: [
-      {
-        partnerId: "cd2b71fa-9feb-4511-bd7c-be445d8f4f40",
-        fullName: "Kamaldeep Singh",
-        dateOfAppointment: "2025-07-31T17:47:22.608996600",
-        designation: "Partner",
-        personalDocuments: {
-          proofOfIdentity: {
-            data: { extractedContent: {} },
-            options: [
-              { text: "Pan Card", value: "personalpan", key: "personalpan" },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-identity",
-                key: "aadhaar-identity",
-              },
-              { text: "Driving Licence", value: "driving", key: "driving" },
-              { text: "Passport", value: "passport", key: "passport" },
-            ],
-            selectedType: "personalpan",
-            label: "Select Proof of identity",
-            type: "proofOfIdentity",
-            acceptedTypes: "pdf, jpg, jpeg, png",
+        proofOfAddress: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          proofOfAddress: {
-            data: { extractedContent: {} },
-            options: [
-              {
-                text: "Electricity bill (Not more than 2 months)",
-                value: "electricity",
-                key: "electricity",
-              },
-              {
-                text: "Internet bill (Not more than 2 months)",
-                value: "internet",
-                key: "internet",
-              },
-              {
-                text: "Gas bill (Not more than 2 months)",
-                value: "gas",
-                key: "gas",
-              },
-              {
-                text: "Landline bill (Not more than 2 months)",
-                value: "landline",
-                key: "landline",
-              },
-              { text: "Bank Statement", value: "bank", key: "bank" },
-              {
-                text: "Rental Agreement/Lease Agreement",
-                value: "rental",
-                key: "rental",
-              },
-              {
-                text: "Property Tax Receipt",
-                value: "property",
-                key: "property",
-              },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-address",
-                key: "aadhaar-address",
-              },
-            ],
-            selectedType: "electricity",
-            label: "Select Proof of address",
-            type: "proofOfAddress",
-            acceptedTypes: "pdf, jpg, jpeg, png",
-          },
-          photograph: {
-            data: { extractedContent: {} },
-            label: "Upload Photograph",
-            acceptedTypes: "jpg, jpeg, png",
-            type: "photograph",
-          },
-          specimenSignature: {
-            data: { extractedContent: {} },
-            label: "Upload Specimen Signature",
-            type: "signature",
-            acceptedTypes: "jpg, jpeg, png",
-          },
+          options: [
+            {
+              text: "Electricity bill (Not more than 2 months)",
+              value: "electricity",
+              key: "electricity",
+            },
+            {
+              text: "Internet bill (Not more than 2 months)",
+              value: "internet",
+              key: "internet",
+            },
+            {
+              text: "Gas bill (Not more than 2 months)",
+              value: "gas",
+              key: "gas",
+            },
+            {
+              text: "Landline bill (Not more than 2 months)",
+              value: "landline",
+              key: "landline",
+            },
+            { text: "Bank Statement", value: "bank", key: "bank" },
+            { text: "Rental Agreement", value: "rental", key: "rental" },
+            {
+              text: "Property Tax Receipt",
+              value: "property",
+              key: "property",
+            },
+            { text: "Aadhar Card", value: "aadhar", key: "aadhar" },
+          ],
+          selectedType: "electricity",
+          label: "Select Proof of address",
         },
-      },
-      {
-        partnerId: "9cfec374-ef4a-48a9-b316-90860744a50f",
-        fullName: "Parminder Kumar",
-        dateOfAppointment: "2025-07-31T17:47:22.608996600",
-        designation: "Partner",
-        personalDocuments: {
-          proofOfIdentity: {
-            data: { extractedContent: {} },
-            options: [
-              { text: "Pan Card", value: "personalpan", key: "personalpan" },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-identity",
-                key: "aadhaar-identity",
-              },
-              { text: "Driving Licence", value: "driving", key: "driving" },
-              { text: "Passport", value: "passport", key: "passport" },
-            ],
-            selectedType: "personalpan",
-            label: "Select Proof of identity",
-            type: "proofOfIdentity",
-            acceptedTypes: "pdf, jpg, jpeg, png",
+        photograph: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          proofOfAddress: {
-            data: { extractedContent: {} },
-            options: [
-              {
-                text: "Electricity bill (Not more than 2 months)",
-                value: "electricity",
-                key: "electricity",
-              },
-              {
-                text: "Internet bill (Not more than 2 months)",
-                value: "internet",
-                key: "internet",
-              },
-              {
-                text: "Gas bill (Not more than 2 months)",
-                value: "gas",
-                key: "gas",
-              },
-              {
-                text: "Landline bill (Not more than 2 months)",
-                value: "landline",
-                key: "landline",
-              },
-              { text: "Bank Statement", value: "bank", key: "bank" },
-              {
-                text: "Rental Agreement/Lease Agreement",
-                value: "rental",
-                key: "rental",
-              },
-              {
-                text: "Property Tax Receipt",
-                value: "property",
-                key: "property",
-              },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-address",
-                key: "aadhaar-address",
-              },
-            ],
-            selectedType: "electricity",
-            label: "Select Proof of address",
-            type: "proofOfAddress",
-            acceptedTypes: "pdf, jpg, jpeg, png",
-          },
-          photograph: {
-            data: { extractedContent: {} },
-            label: "Upload Photograph",
-            acceptedTypes: "jpg, jpeg, png",
-            type: "photograph",
-          },
-          specimenSignature: {
-            data: { extractedContent: {} },
-            label: "Upload Specimen Signature",
-            type: "signature",
-            acceptedTypes: "jpg, jpeg, png",
-          },
+          label: "Upload Photograph *",
+          type: "photograph",
         },
-      },
-      {
-        partnerId: "ea8902b4-1833-4364-9b2d-77a78bff1d0f",
-        fullName: "Gurmeet Singh",
-        dateOfAppointment: "2025-07-31T17:47:22.608996600",
-        designation: "Partner",
-        personalDocuments: {
-          proofOfIdentity: {
-            data: { extractedContent: {} },
-            options: [
-              { text: "Pan Card", value: "personalpan", key: "personalpan" },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-identity",
-                key: "aadhaar-identity",
-              },
-              { text: "Driving Licence", value: "driving", key: "driving" },
-              { text: "Passport", value: "passport", key: "passport" },
-            ],
-            selectedType: "personalpan",
-            label: "Select Proof of identity",
-            type: "proofOfIdentity",
-            acceptedTypes: "pdf, jpg, jpeg, png",
+        specimenSignature: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          proofOfAddress: {
-            data: { extractedContent: {} },
-            options: [
-              {
-                text: "Electricity bill (Not more than 2 months)",
-                value: "electricity",
-                key: "electricity",
-              },
-              {
-                text: "Internet bill (Not more than 2 months)",
-                value: "internet",
-                key: "internet",
-              },
-              {
-                text: "Gas bill (Not more than 2 months)",
-                value: "gas",
-                key: "gas",
-              },
-              {
-                text: "Landline bill (Not more than 2 months)",
-                value: "landline",
-                key: "landline",
-              },
-              { text: "Bank Statement", value: "bank", key: "bank" },
-              {
-                text: "Rental Agreement/Lease Agreement",
-                value: "rental",
-                key: "rental",
-              },
-              {
-                text: "Property Tax Receipt",
-                value: "property",
-                key: "property",
-              },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-address",
-                key: "aadhaar-address",
-              },
-            ],
-            selectedType: "electricity",
-            label: "Select Proof of address",
-            type: "proofOfAddress",
-            acceptedTypes: "pdf, jpg, jpeg, png",
-          },
-          photograph: {
-            data: { extractedContent: {} },
-            label: "Upload Photograph",
-            acceptedTypes: "jpg, jpeg, png",
-            type: "photograph",
-          },
-          specimenSignature: {
-            data: { extractedContent: {} },
-            label: "Upload Specimen Signature",
-            type: "signature",
-            acceptedTypes: "jpg, jpeg, png",
-          },
+          label: "Upload Specimen Signature",
+          type: "signature",
         },
-      },
-      {
-        partnerId: "8f1cc29e-4b1e-4e46-9230-81853d5837d7",
-        fullName: "Neelam Rani",
-        dateOfAppointment: "2025-07-31T17:47:22.608996600",
-        designation: "Partner",
-        personalDocuments: {
-          proofOfIdentity: {
-            data: { extractedContent: {} },
-            options: [
-              { text: "Pan Card", value: "personalpan", key: "personalpan" },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-identity",
-                key: "aadhaar-identity",
-              },
-              { text: "Driving Licence", value: "driving", key: "driving" },
-              { text: "Passport", value: "passport", key: "passport" },
-            ],
-            selectedType: "personalpan",
-            label: "Select Proof of identity",
-            type: "proofOfIdentity",
-            acceptedTypes: "pdf, jpg, jpeg, png",
+        director_identification_number: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          proofOfAddress: {
-            data: { extractedContent: {} },
-            options: [
-              {
-                text: "Electricity bill (Not more than 2 months)",
-                value: "electricity",
-                key: "electricity",
-              },
-              {
-                text: "Internet bill (Not more than 2 months)",
-                value: "internet",
-                key: "internet",
-              },
-              {
-                text: "Gas bill (Not more than 2 months)",
-                value: "gas",
-                key: "gas",
-              },
-              {
-                text: "Landline bill (Not more than 2 months)",
-                value: "landline",
-                key: "landline",
-              },
-              { text: "Bank Statement", value: "bank", key: "bank" },
-              {
-                text: "Rental Agreement/Lease Agreement",
-                value: "rental",
-                key: "rental",
-              },
-              {
-                text: "Property Tax Receipt",
-                value: "property",
-                key: "property",
-              },
-              {
-                text: "Aadhaar Card",
-                value: "aadhaar-address",
-                key: "aadhaar-address",
-              },
-            ],
-            selectedType: "electricity",
-            label: "Select Proof of address",
-            type: "proofOfAddress",
-            acceptedTypes: "pdf, jpg, jpeg, png",
-          },
-          photograph: {
-            data: { extractedContent: {} },
-            label: "Upload Photograph",
-            acceptedTypes: "jpg, jpeg, png",
-            type: "photograph",
-          },
-          specimenSignature: {
-            data: { extractedContent: {} },
-            label: "Upload Specimen Signature",
-            type: "signature",
-            acceptedTypes: "jpg, jpeg, png",
-          },
+          label: "Director Identification Number (DIN)",
+          type: "din",
         },
-      },
-    ],
-    entityDocs: {
-      partnership_deed: {
-        fileName: "Partnership_Deed.pdf",
-        s3Url:
-          "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/entitydocs/documents/Partnership_Deed.pdf",
-        type: "partnership_deed",
-        label: "Partnership Deed",
-        isRequired: false,
-        extractedContent: {
-          firmName: "M/s B & B Flour Mill",
-          partners:
-            "Kamaldeep Singh, Parminder Kumar, Gurmeet Singh, Neelam Rani",
-          deedDate: "27th day of February, 2013",
-          deedNumber: "E 704562",
-          extractedSummary: {
-            partners:
-              "Kamaldeep Singh, Parminder Kumar, Gurmeet Singh, Neelam Rani",
+        board_resolution: {
+          data: {
+            fileName: null,
+            s3Url: null,
+            extractedContent: {},
           },
-          verificationData: {
-            isVerified: true,
-            validationType: "AI",
-            verifiedOn: "2025-07-31T17:47:22.649454100",
-            partnersExtracted: true,
-            firmNameExtracted: false,
-            deedDateExtracted: false,
-            deedNumberExtracted: false,
-          },
+          label: "Board Resolution",
+          type: "board_resolution",
         },
-        uploadedAt: "2025-07-31T17:47:22.765462400",
-        verificationData: {
-          isVerified: true,
-          validationType: "AI",
-          verifiedOn: "2025-07-31T17:47:22.649454100",
-          partnersExtracted: true,
-          firmNameExtracted: false,
-          deedDateExtracted: false,
-          deedNumberExtracted: false,
-        },
-      },
-      pan: {
-        fileName: "1. PAN - Ebitaus - Copy.pdf",
-        s3Url:
-          "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/entitydocs/documents/1.-PAN---Ebitaus---Copy.pdf",
-        type: "pan",
-        label: "PAN",
-        isRequired: false,
-        extractedContent: {
-          PAN: "AAHCE4484E",
-          entityName: "Ebitaus Pvt Ltd",
-          verificationData: {
-            verifiedOn: "2025-07-31T17:47:40.985686800",
-            isVerified: true,
-            validationType: "AI",
+        personalpan: {
+          fileName: "pan.jpg",
+          s3Url:
+            "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/personaldocs/BORUGULA%20SURESH-5d363a13-1648-4a81-9650-86e95e385888/pan.jpg",
+          extractedData: {
+            error:
+              "AI extraction failed: Failed to resolve 'api.openai.com' [A(1), AAAA(28)] after 4 queries ",
+            message: "Unexpected error during AI processing",
           },
-        },
-        uploadedAt: "2025-07-31T17:47:40.985686800",
-        verificationData: {
-          verifiedOn: "2025-07-31T17:47:40.985686800",
-          isVerified: true,
-          validationType: "AI",
-        },
-      },
-      gst_certificate: {
-        fileName: "2. GST Certificate 2024 .pdf",
-        s3Url:
-          "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/entitydocs/documents/2.-GST-Certificate-2024-.pdf",
-        type: "gst",
-        label: "GST Certificate",
-        isRequired: false,
-        extractedContent: {
-          companyName:
-            "YObvOTBpytHI9oVEi37ACeDlvc334goBkpyNCUXt+zWktS0AeQCqI/FrENH77KjzvBQn",
-          GSTIN: "ctnBHPhe8PYbqKho0l9ypCWduE79SAEiv13g8YnzJX0ZfJoiTGgjjmPEMQ==",
-          address:
-            "9th Floor, No.37 PM Tower, Greams Road, Chennai, Tamil Nadu - 600006",
-        },
-        uploadedAt: "2025-07-31T15:45:43.583357",
-        verificationData: {
-          addressExtracted: true,
-          verifiedOn: "2025-07-31T15:45:43.578140900",
-          isVerified: true,
-          validationType: "AI",
-        },
-      },
-      registration_certificate: {
-        fileName: "Partnership_Registration_Certificate_Ebitaus.pdf",
-        s3Url:
-          "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/entitydocs/documents/Partnership_Registration_Certificate_Ebitaus.pdf",
-        type: "registration_certificate",
-        label: "Registration Certificate",
-        isRequired: false,
-        extractedContent: {
-          firmName: "Ebitaus Traders",
-          registrationNumber: "TN-2025-5678",
-          registrationDate: "15/07/2025",
-          businessAddress:
-            "No. 12, 3rd Cross Street, Anna Nagar, Chennai, Tamil Nadu – 600040",
-          verificationData: {
-            isVerified: true,
-            validationType: "AI",
-            verifiedOn: "2025-07-31T17:48:07.360168",
-          },
-        },
-        uploadedAt: "2025-07-31T17:48:08.146421300",
-        verificationData: {
-          isVerified: true,
-          validationType: "AI",
-          verifiedOn: "2025-07-31T17:48:07.360168",
-        },
-      },
-      address_proof: {
-        fileName: "Proprietorship_Bank_Statement_July2025_Updated.pdf",
-        s3Url:
-          "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/entitydocs/documents/Proprietorship_Bank_Statement_July2025_Updated.pdf",
-        type: "address_proof",
-        label: "Select Company Address Proof",
-        isRequired: false,
-        extractedContent: {
-          companyname:
-            "Kxd3kOOVE5lTYcul7Ye0Aj7j/ZgJ2Rp7mWDuwGHw95PCC0CTLVpd4Gqs/ayskb1TuIfr",
-          bankName: "Axis Bank",
-          statementDate: "30-Jul-2025",
-          address: "Branch: Anna Nagar, Chennai",
-          verificationData: {
-            isVerified: true,
-            validationType: "Internal",
-            verifiedOn: "2025-07-31T17:48:58.994792500",
-            serviceType: "bank_statement",
-            nameMatchStatus:
-              "Not checked - Entity name validation commented out",
-            dateValidationStatus: "Not checked",
-            addressExtracted: true,
-          },
-        },
-        uploadedAt: "2025-07-31T17:48:59.000585800",
-        selectedType: "bank_statement",
-        options: [
-          {
-            text: "Electricity Bill (Not more than 3 months)",
-            value: "electricity",
-            key: "electricity",
-          },
-          {
-            text: "Internet Bill (Not more than 3 months)",
-            value: "internet",
-            key: "internet",
-          },
-          {
-            text: "Gas Bill (Not more than 3 months)",
-            value: "gas",
-            key: "gas",
-          },
-          {
-            text: "Water Bill (Not more than 3 months)",
-            value: "water",
-            key: "water",
-          },
-          {
-            text: "Landline Bill (Not more than 3 months)",
-            value: "landline",
-            key: "landline",
-          },
-          {
-            text: "Bank Statement",
-            value: "bank_statement",
-            key: "bank_statement",
-          },
-          {
-            text: "Rental Agreement",
-            value: "rental_agreement",
-            key: "rental_agreement",
-          },
-          {
-            text: "Property Tax Receipt",
-            value: "property_tax",
-            key: "property_tax",
-          },
-        ],
-        verificationData: {
-          isVerified: true,
-          validationType: "Internal",
-          verifiedOn: "2025-07-31T17:48:58.994792500",
-          serviceType: "bank_statement",
-          nameMatchStatus: "Not checked - Entity name validation commented out",
-          dateValidationStatus: "Not checked",
-          addressExtracted: true,
         },
       },
     },
-    mailingAddress: {
-      line1: "Branch: Anna Nagar, Chennai",
-      city: "dsfg",
-      pincode: "dsf",
-      state: "sd",
-      country: "dsf",
-      sameAsMailing: true,
+    {
+      ausId: "52e9030f-135d-4e53-8b94-8db907309a8f",
+      fullName: "Nish",
+      emailAddress: "nishanthan.karunakaran@ebitaus.com",
+      phoneNumber: "9863215884",
+      personalDocuments: {
+        proofOfIdentity: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          options: [
+            { text: "Pan Card", value: "personalpan", key: "personalpan" },
+            { text: "Aadhar Card", value: "aadhar", key: "aadhar" },
+            { text: "Driving Licence", value: "driving", key: "driving" },
+            { text: "Passport", value: "passport", key: "passport" },
+          ],
+          selectedType: "personalpan",
+          label: "Select Proof of identity",
+        },
+        proofOfAddress: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          options: [
+            {
+              text: "Electricity bill (Not more than 2 months)",
+              value: "electricity",
+              key: "electricity",
+            },
+            {
+              text: "Internet bill (Not more than 2 months)",
+              value: "internet",
+              key: "internet",
+            },
+            {
+              text: "Gas bill (Not more than 2 months)",
+              value: "gas",
+              key: "gas",
+            },
+            {
+              text: "Landline bill (Not more than 2 months)",
+              value: "landline",
+              key: "landline",
+            },
+            { text: "Bank Statement", value: "bank", key: "bank" },
+            { text: "Rental Agreement", value: "rental", key: "rental" },
+            {
+              text: "Property Tax Receipt",
+              value: "property",
+              key: "property",
+            },
+            { text: "Aadhar Card", value: "aadhar", key: "aadhar" },
+          ],
+          selectedType: "electricity",
+          label: "Select Proof of address",
+        },
+        photograph: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          label: "Upload Photograph *",
+          type: "photograph",
+        },
+        specimenSignature: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          label: "Upload Specimen Signature",
+          type: "signature",
+        },
+        director_identification_number: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          label: "Director Identification Number (DIN)",
+          type: "din",
+        },
+        board_resolution: {
+          data: {
+            fileName: "",
+            s3Url: "",
+            extractedData: {},
+          },
+          label: "Board Resolution",
+          type: "board_resolution",
+        },
+      },
     },
-    registeredAddress: {
-      line1: "Branch: Anna Nagar, Chennai",
-      city: "dsfg",
-      pincode: "dsf",
-      state: "sd",
-      country: "dsf",
-      sameAsMailing: true,
+  ],
+  beneficialOwners: [
+    {
+      boId: "bo-1752580712392",
+      name: "Monesh B",
+      addressLine: "monesh.babu@ebitaus.com",
+      city: "Malajkhand",
+      state: "Madhya Pradesh",
+      country: "India",
+      pinCode: "481116",
+      pan: "ABCDE1234B",
+      personalDocuments: {},
     },
-    stepper: [
-      { key: 0, label: "Welcome", isCompleted: true },
-      { key: 1, label: "Entity Docs", isCompleted: true },
-      { key: 2, label: "Personal Docs", isCompleted: true },
-      { key: 3, label: "KYC Form", isCompleted: true },
-      { key: 4, label: "eSign & Status", isCompleted: false },
-    ],
-    currentStep: 4,
-    isEsignInitiated: true,
-    isVkycInitiated: false,
-    submittedByBankerId: "6860c98570dd7b6bfbe4693f",
-    submittedByBankerName: "Monesh Babu",
-    submittedByBankerEmail: "monesh.babu@ebitaus.com",
-    submittedAt: "2025-07-30T08:57:39.948+00:00",
-    updatedAt: "2025-08-02T06:38:14.484+00:00",
-    reportS3Url:
-      "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/report/kyc_form_1754116688283.pdf",
-    toBeSignedReportS3Url:
-      "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00129/report/toBeSigned/toBe_signed_report_1754116688284.pdf",
-    esignDocId: "34b08a8e-db74-4bcf-870f-4dc972803230",
-    isSigningCompleted: false,
-    esignType: "aadharEsign",
-    esignUserDetails: {
-      users: [
+  ],
+  boAnswers: [3],
+  directors: [
+    {
+      dirId: "5d000b5d-953e-4ab0-97a3-7032ef12d5da",
+      fullName: "PITCHAI VENKATESH",
+      din: "10061417",
+      pan: "CIXKN9255M",
+      aadhaar: "326234797734",
+      dateOfAppointment: "03/03/2023",
+      designation: "Director",
+      isVerifiedByUser: true,
+    },
+    {
+      dirId: "2896e7d2-70c8-43d1-be2e-b3616ff9099b",
+      fullName: ". KOKILA",
+      din: "10061418",
+      pan: "ABCDE1234F",
+      dateOfAppointment: "03/03/2023",
+      designation: "Director",
+    },
+  ],
+  entityDocs: {
+    pan: {
+      fileName: "1. PAN - Ebitaus.pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/1.-PAN---Ebitaus.pdf",
+      type: "pan",
+      label: "PAN",
+      extractedContent: {
+        PAN: "AAHCE4484E",
+        companyName: "EBITAUS PRIVATE LIMITED",
+      },
+      uploadedAt: "2025-07-15T15:44:55.835Z",
+      verificationData: {
+        verifiedOn: "2025-07-15T15:44:55.835Z",
+        isVerified: true,
+        validationType: "PAN",
+      },
+    },
+    certificate_of_incorporation: {
+      fileName: "4. Ebitaus P Ltd - Certificate of Incorporation.pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/4.-Ebitaus-P-Ltd---Certificate-of-Incorporation.pdf",
+      type: "coi",
+      label: "Certificate of Incorporation",
+      extractedContent: {
+        TAN: "CHEE09826F",
+        dateOfIncorporation: "03-03-2023",
+        address:
+          "AWFIS,No.143/1, Uthamar Gandhi Road,Nungambakkam,Chennai,Chennai-600034,Tamil Nadu",
+        companyName: "EBITAUS PRIVATE LIMITED",
+        CIN: "U62099TN2023PTC158659",
+        PAN: "AAHCE4484E",
+      },
+      uploadedAt: "2025-07-15T15:46:22.252Z",
+      verificationData: {
+        verifiedOn: "2025-07-15T15:46:22.177Z",
+        isVerified: true,
+        validationType: "MCA",
+      },
+    },
+    gst_certificate: {
+      fileName: "2. GST Certificate 2024 .pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/2.-GST-Certificate-2024-.pdf",
+      type: "gst",
+      label: "GST Certificate",
+      extractedContent: {
+        GSTIN: "33AAHCE4484E1ZQ",
+        address:
+          "Floor No: III, Flat No.: 37, Building No: F1, Building/Flat name: PM Tower, Road/Street: Ganesha Road, City/Town/Village: Chennai, District: Chennai, State: Tamil Nadu, PIN Code: 600006",
+        companyName: "EBITAUS PRIVATE LIMITED",
+      },
+      uploadedAt: "2025-07-15T15:47:25.495Z",
+      verificationData: {
+        verifiedOn: "2025-07-15T15:47:25.495Z",
+        isVerified: true,
+        validationType: "GSTIN",
+      },
+    },
+    memorandum_of_association: {
+      fileName: "Fresh - MoA.pdf.pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/Fresh---MoA.pdf.pdf",
+      type: "moa",
+      label: "Memorandum of Association",
+      extractedContent: {
+        companyName: "Ebitaus Private Limited",
+      },
+      uploadedAt: "2025-07-15T15:47:36.303Z",
+      verificationData: {
+        verifiedOn: "2025-07-15T15:47:36.303Z",
+        isVerified: true,
+        validationType: "Internal",
+      },
+    },
+    articles_of_association: {
+      fileName: "AOA- altered (Ebitaus).pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/AOA--altered-(Ebitaus).pdf",
+      type: "aoa",
+      label: "Articles of Association",
+      extractedContent: {
+        companyName: "EBITAUS PRIVATE LIMITED",
+      },
+      uploadedAt: "2025-07-15T15:48:05.261Z",
+      verificationData: {
+        verifiedOn: "2025-07-15T15:48:05.222Z",
+        isVerified: true,
+        validationType: "Internal",
+      },
+    },
+    board_resolution: {
+      fileName: "form32.pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/form32.pdf",
+      type: "br",
+      label: "Board Resolution",
+      extractedContent: {
+        error: "Not a valid Board Resolution Document",
+        message: null,
+      },
+      uploadedAt: "2025-07-15T15:48:18.401Z",
+      verificationData: {},
+    },
+    address_proof: {
+      fileName: "Gas Bill May-2025.pdf",
+      s3Url:
+        "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00063/entitydocs/documents/Gas-Bill-May-2025.pdf",
+      type: "address_proof",
+      label: "Select Company Address Proof",
+      extractedContent: {
+        error:
+          "AI extraction failed: Failed to resolve 'api.openai.com' [A(1), AAAA(28)] after 4 queries ",
+        message: "Unexpected error during AI processing",
+      },
+      uploadedAt: "2025-07-15T17:52:04.448Z",
+      selectedType: "gas",
+      options: [
         {
-          redirectUrl:
-            "https://uat.esign-proteantech.in/esign/esign-verify?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWNpcGllbnRJZCI6IjdiMjRjMDQyLTQ1NDYtNGQzOC04Njc2LTc4MTgwZTYxOWE3MCIsImlzUGF5bWVudEFwcGxpY2FibGUiOmZhbHNlLCJpYXQiOjE3NTQwNDU2ODEsImV4cCI6MTc1NDEzMjA4MX0.lJcgqiMOgKKo6SuiCKx9gs2S33xCP5jHyr7JDfIQgWc",
-          recipientId: "7b24c042-4546-4d38-8676-78180e619a70",
-          emailId: "monesh.babu@ebitaus.com",
-          status: "",
+          text: "Electricity Bill (Not more than 3 months)",
+          value: "electricity",
+          key: "electricity",
         },
+        {
+          text: "Internet Bill (Not more than 3 months)",
+          value: "internet",
+          key: "internet",
+        },
+        { text: "Gas Bill (Not more than 3 months)", value: "gas", key: "gas" },
+        {
+          text: "Water Bill (Not more than 3 months)",
+          value: "water",
+          key: "water",
+        },
+        {
+          text: "Landline Bill (Not more than 3 months)",
+          value: "landline",
+          key: "landline",
+        },
+        {
+          text: "Bank Statement",
+          value: "bank_statement",
+          key: "bank_statement",
+        },
+        {
+          text: "Rental Agreement",
+          value: "rental_agreement",
+          key: "rental_agreement",
+        },
+        {
+          text: "Property Tax Receipt",
+          value: "property_tax",
+          key: "property_tax",
+        },
+        { text: "Utility Bill", value: "utility_bill", key: "utility_bill" },
       ],
+      verificationData: {},
     },
-    status: "ESIGN_PENDING",
-    kycFormStatus: "Completed",
-    _class: "com.ebitaus.kycus.features.banker.kyc.entity.KycApplication",
-  }
+  },
+  mailingAddress: {},
+  registeredAddress: {
+    addressLine:
+      "AWFIS,No.143/1, Uthamar Gandhi Road,Nungambakkam,Chennai,Chennai-600034,Tamil Nadu",
+    updatedFromCoi: true,
+    updatedAt: "2025-07-15T15:46:22.177Z",
+  },
+  stepper: [
+    { key: 0, label: "Welcome", isCompleted: true },
+    { key: 1, label: "Entity Docs", isCompleted: true },
+    { key: 2, label: "Personal Docs", isCompleted: false },
+    { key: 3, label: "KYC Form", isCompleted: false },
+    { key: 4, label: "eSign & Status", isCompleted: false },
+  ],
+  currentStep: 1,
+  isEsignInitiated: false,
+  isVkycInitiated: false,
+  submittedByBankerId: "6860c98570dd7b6bfbe4693f",
+  submittedByBankerName: "Monesh Babu",
+  submittedByBankerEmail: "monesh.babu@ebitaus.com",
+  submittedAt: "2025-07-15T10:10:29.116Z",
+  updatedAt: "2025-07-15T12:20:52.023Z",
+  isSigningCompleted: false,
+  status: "IN_PROGRESS",
+  kycFormStatus: "In Progress",
+  _class: "com.ebitaus.kycus.features.banker.kyc.entity.KycApplication",
+};

@@ -1,0 +1,1607 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Individual KYC FORM</title>
+    <link rel="stylesheet" href="./kyc.css" />
+    <link rel="stylesheet" href="./var.css" />
+    <link rel="stylesheet" href="./individual-rekyc.css" />
+    <script>
+      // Handle Others checkbox functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const othersCheckboxes = [
+          'othersOccupation',
+          'othersEmployment', 
+          'othersProfessional',
+          'othersBusiness',
+          'othersBusinessType',
+          'othersIncome'
+        ];
+
+        othersCheckboxes.forEach(function(checkboxId) {
+          const checkbox = document.getElementById(checkboxId);
+          const input = document.getElementById(checkboxId + 'Input');
+          
+          if (checkbox && input) {
+            checkbox.addEventListener('change', function() {
+              if (this.checked) {
+                input.style.display = 'inline-block';
+                input.focus();
+              } else {
+                input.style.display = 'none';
+                input.value = '';
+              }
+            });
+          }
+        });
+
+        // Mutually exclusive checkbox groups
+        const mutuallyExclusiveGroups = [
+          // Occupation (Financial employed with)
+          ['salaried', 'selfEmployed', 'retired', 'selfEmployedProfessional', 'student', 'housewife', 'politician', 'othersOccupation'],
+          
+          // Employment Type (second row)
+          ['privateLimited', 'proprietorship', 'publicSector', 'multinational', 'partnership', 'publicLimited', 'government', 'othersEmployment'],
+          
+          // PEP section
+          ['pepYes', 'pepNo'],
+          
+          // Marital Status
+          ['married', 'unmarried', 'othersMarital'],
+          
+          // Identification Type
+          ['passport', 'drivingLicense', 'aadhaarCard', 'electionCard', 'nregaCard', 'nprLetter'],
+          
+          // Tax purposes address (other than Mailing address)
+          ['residentialBusiness', 'business', 'registeredOffice'],
+          
+          // Residency Details
+          ['residentIndividual', 'nonResidentIndian', 'foreignNational', 'personOfIndianOrigin'],
+          
+          // Proof of Address
+          ['passportProof', 'voterIdProof', 'drivingLicenseProof', 'nregaJobCard', 'uidAadhaar', 'nprLetterProof'],
+          
+          // Address Type (other than Residential)
+          ['residentialBusinessAddress', 'businessAddress', 'registeredOfficeAddress'],
+          
+          // Nature of Business
+          ['agriculture', 'stockBroker', 'realEstate', 'manufacturing', 'serviceProvider', 'trader', 'othersBusiness'],
+          
+          // Gross Annual Income
+          ['income1', 'income2', 'income3', 'income4', 'income5', 'income6', 'income7', 'income8'],
+          
+          // Source of Income
+          ['salary', 'agricultureIncome', 'businessIncome', 'investmentIncome', 'othersIncome'],
+          
+          // Type of Business/Firm
+          ['partnershipBusiness', 'privateLimitedBusiness', 'publicLimitedBusiness', 'soleProprietorship', 'othersBusinessType'],
+          
+          // Self Employed Professional
+          ['cacsicwacma', 'lawyer', 'doctor', 'architect', 'itConsultant', 'othersProfessional'],
+          
+          // Residence Type
+          ['owned', 'rentalFamily', 'companyProvided'],
+          
+          // Address Change
+          ['addressChange', 'noAddressChange']
+        ];
+
+        // Add mutually exclusive behavior to each group
+        mutuallyExclusiveGroups.forEach(function(group) {
+          group.forEach(function(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            
+            if (checkbox) {
+              checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                  // Uncheck all other checkboxes in the same group
+                  group.forEach(function(otherCheckboxId) {
+                    if (otherCheckboxId !== checkboxId) {
+                      const otherCheckbox = document.getElementById(otherCheckboxId);
+                      if (otherCheckbox) {
+                        otherCheckbox.checked = false;
+                        
+                        // If it's an "others" checkbox, also hide its input
+                        const otherInput = document.getElementById(otherCheckboxId + 'Input');
+                        if (otherInput) {
+                          otherInput.style.display = 'none';
+                          otherInput.value = '';
+                        }
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          });
+        });
+      });
+
+      // Handle form data from parent React component
+      window.addEventListener('message', function(event) {
+        if (event.data.type === 'SET_FORM_DATA') {
+          const formData = event.data.payload;
+  
+          
+          // Populate form fields with data from API
+          if (formData) {
+            // Enhanced helper function to populate ALL field types including checkboxes
+            function populateField(fieldId, value) {
+              const field = document.getElementById(fieldId);
+              if (field && (value !== null && value !== undefined && value !== '')) {
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                  // For checkboxes and radio buttons, set the checked property
+                  field.checked = Boolean(value);
+                  if (field.checked) {
+                    field.classList.add('patched-field');
+                  }
+        
+                } else {
+                  // For text inputs, textareas, selects, set the value
+                  field.value = value;
+                  field.classList.add('patched-field');
+        
+                }
+                return true;
+              } else {
+      
+              }
+              return false;
+            }
+
+            // Helper function to display photograph
+            function displayPhotograph(base64Data) {
+              const photoBox = document.querySelector('.photo_box');
+              if (photoBox && base64Data) {
+                // Create image element
+                const img = document.createElement('img');
+                img.src = 'data:image/jpeg;base64,' + base64Data;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'fill';
+                
+                // Clear existing content and add image
+                photoBox.innerHTML = '';
+                photoBox.appendChild(img);
+                return true;
+              }
+              return false;
+            }
+            
+            // Customer Information
+            if (formData.customerId) {
+              populateField('customerId', formData.customerId);
+            }
+            
+            if (formData.customerName) {
+              populateField('customerName', formData.customerName);
+            }
+            
+            if (formData.accountNumber) {
+              populateField('accountNumber', formData.accountNumber);
+            }
+            
+            // Personal Information
+            if (formData.firstName) {
+              populateField('firstName', formData.firstName);
+            }
+            
+            if (formData.lastName) {
+              populateField('lastName', formData.lastName);
+            }
+            
+            if (formData.panNumber) {
+              populateField('panNumber', formData.panNumber);
+            }
+            
+            if (formData.dateOfBirth) {
+              populateField('dateOfBirth', formData.dateOfBirth);
+            }
+            
+            // Contact Information
+            if (formData.email) {
+              populateField('email', formData.email);
+            }
+            
+            if (formData.phone) {
+              populateField('mobile', formData.phone);
+            }
+            
+            // Permanent Address Components (extracted from API)
+            if (formData.permFlatNo) {
+              populateField('permFlatNo', formData.permFlatNo);
+            }
+            
+            if (formData.permRoadName) {
+              populateField('permRoadName', formData.permRoadName);
+            }
+            
+            // Permanent Address Information (if available)
+            if (formData.permanentAddress) {
+              const permAddr = formData.permanentAddress;
+              
+              if (permAddr.city) {
+                populateField('permCity', permAddr.city);
+              }
+              
+              if (permAddr.state) {
+                populateField('permState', permAddr.state);
+              }
+              
+              if (permAddr.pincode) {
+                populateField('permPinCode', permAddr.pincode);
+              }
+              
+              if (permAddr.country) {
+                populateField('permCountry', permAddr.country);
+              }
+            }
+            
+            // Store permanent address data for potential mailing address use
+            window.permanentAddressData = {
+              flatNumber: formData.flatNumber || '',
+              roadName: formData.roadName || '',
+              city: formData.permanentAddress?.city || '',
+              state: formData.permanentAddress?.state || '',
+              pincode: formData.permanentAddress?.pincode || '',
+              country: formData.permanentAddress?.country || 'India'
+            };
+            
+    
+            
+            // Handle photograph data (base64)
+            if (formData.photographBase64) {
+              displayPhotograph(formData.photographBase64);
+      
+            }
+            
+            // Extended KYC Information
+            if (formData.fatherName) {
+              populateField('fatherName', formData.fatherName);
+            }
+            
+            if (formData.nationality) {
+              populateField('nationality', formData.nationality);
+            }
+            
+            if (formData.identificationNumber) {
+              populateField('identificationNumber', formData.identificationNumber);
+            }
+            
+            // Handle identification type checkboxes
+            if (formData.identificationType) {
+              const idTypeMapping = {
+                'pancard': 'panCard', // Note: might need to find the PAN card checkbox
+                'aadhaar': 'aadhaarCard',
+                'driving': 'drivingLicense',
+                'passport': 'passport',
+                'election': 'electionCard',
+                'nrega': 'nregaCard',
+                'npr': 'nprLetter'
+              };
+              
+              const checkboxId = idTypeMapping[formData.identificationType];
+              if (checkboxId) {
+                const checkbox = document.getElementById(checkboxId);
+                if (checkbox) {
+                  checkbox.checked = true;
+                  checkbox.classList.add('patched-field');
+      
+                }
+              }
+            }
+            
+            // Handle proof of address type checkboxes
+            if (formData) {
+              console.log('formData.proofOfAddressType', formData);
+              const addressTypeMapping = {
+                'uidAadhaar': 'uidAadhaar',
+                'driving': 'drivingLicenseProof',
+                'passport': 'passportProof', // might need to find this ID
+                'electricity': 'electricityBill', // might need to find this ID
+                'internet': 'internetBill', // might need to find this ID
+                'gas': 'gasBill', // might need to find this ID
+                'landline': 'landlineBill', // might need to find this ID
+                'bank': 'bankStatement', // might need to find this ID
+                'npr': 'nprLetterProof'
+              };
+              
+              const addressCheckboxId = addressTypeMapping[formData.proofOfAddressType];
+              if (addressCheckboxId) {
+                const checkbox = document.getElementById(addressCheckboxId);
+                if (checkbox) {
+                  checkbox.checked = true;
+                  checkbox.classList.add('patched-field');
+      
+                }
+              }
+            }
+            
+            // ALL CHECKBOX FIELDS - Handle boolean values for checkboxes
+    
+            
+            // Occupation checkboxes
+            if (formData.salaried !== undefined) {
+              populateField('salaried', formData.salaried);
+      
+            }
+            if (formData.selfEmployed !== undefined) populateField('selfEmployed', formData.selfEmployed);
+            if (formData.retired !== undefined) populateField('retired', formData.retired);
+            if (formData.selfEmployedProfessional !== undefined) populateField('selfEmployedProfessional', formData.selfEmployedProfessional);
+            if (formData.student !== undefined) populateField('student', formData.student);
+            if (formData.housewife !== undefined) populateField('housewife', formData.housewife);
+            if (formData.politician !== undefined) populateField('politician', formData.politician);
+            if (formData.othersOccupation !== undefined) populateField('othersOccupation', formData.othersOccupation);
+
+            // Employment type
+            if (formData.privateLimited !== undefined) populateField('privateLimited', formData.privateLimited);
+            if (formData.proprietorship !== undefined) populateField('proprietorship', formData.proprietorship);
+            if (formData.publicSector !== undefined) populateField('publicSector', formData.publicSector);
+            if (formData.multinational !== undefined) populateField('multinational', formData.multinational);
+            if (formData.partnership !== undefined) populateField('partnership', formData.partnership);
+            if (formData.publicLimited !== undefined) populateField('publicLimited', formData.publicLimited);
+            if (formData.government !== undefined) populateField('government', formData.government);
+            if (formData.othersEmployment !== undefined) populateField('othersEmployment', formData.othersEmployment);
+
+            // PEP status
+            if (formData.pepYes !== undefined) populateField('pepYes', formData.pepYes);
+            if (formData.pepNo !== undefined) populateField('pepNo', formData.pepNo);
+
+            // Professional type
+            if (formData.cacsicwacma !== undefined) populateField('cacsicwacma', formData.cacsicwacma);
+            if (formData.lawyer !== undefined) populateField('lawyer', formData.lawyer);
+            if (formData.doctor !== undefined) populateField('doctor', formData.doctor);
+            if (formData.architect !== undefined) populateField('architect', formData.architect);
+            if (formData.itConsultant !== undefined) populateField('itConsultant', formData.itConsultant);
+            if (formData.othersProfessional !== undefined) populateField('othersProfessional', formData.othersProfessional);
+
+            // Business type
+            if (formData.agriculture !== undefined) populateField('agriculture', formData.agriculture);
+            if (formData.stockBroker !== undefined) populateField('stockBroker', formData.stockBroker);
+            if (formData.realEstate !== undefined) populateField('realEstate', formData.realEstate);
+            if (formData.manufacturing !== undefined) populateField('manufacturing', formData.manufacturing);
+            if (formData.serviceProvider !== undefined) populateField('serviceProvider', formData.serviceProvider);
+            if (formData.trader !== undefined) populateField('trader', formData.trader);
+            if (formData.othersBusiness !== undefined) populateField('othersBusiness', formData.othersBusiness);
+
+            // Business structure
+            if (formData.partnershipBusiness !== undefined) populateField('partnershipBusiness', formData.partnershipBusiness);
+            if (formData.privateLimitedBusiness !== undefined) populateField('privateLimitedBusiness', formData.privateLimitedBusiness);
+            if (formData.publicLimitedBusiness !== undefined) populateField('publicLimitedBusiness', formData.publicLimitedBusiness);
+            if (formData.soleProprietorship !== undefined) populateField('soleProprietorship', formData.soleProprietorship);
+            if (formData.othersBusinessType !== undefined) populateField('othersBusinessType', formData.othersBusinessType);
+
+            // Income ranges
+            if (formData.income1 !== undefined) populateField('income1', formData.income1);
+            if (formData.income2 !== undefined) populateField('income2', formData.income2);
+            if (formData.income3 !== undefined) populateField('income3', formData.income3);
+            if (formData.income4 !== undefined) populateField('income4', formData.income4);
+            if (formData.income5 !== undefined) populateField('income5', formData.income5);
+            if (formData.income6 !== undefined) populateField('income6', formData.income6);
+            if (formData.income7 !== undefined) populateField('income7', formData.income7);
+            if (formData.income8 !== undefined) populateField('income8', formData.income8);
+
+            // Income sources
+            if (formData.salary !== undefined) populateField('salary', formData.salary);
+            if (formData.agricultureIncome !== undefined) populateField('agricultureIncome', formData.agricultureIncome);
+            if (formData.businessIncome !== undefined) populateField('businessIncome', formData.businessIncome);
+            if (formData.investmentIncome !== undefined) populateField('investmentIncome', formData.investmentIncome);
+            if (formData.othersIncome !== undefined) populateField('othersIncome', formData.othersIncome);
+
+            // Residence type
+            if (formData.owned !== undefined) populateField('owned', formData.owned);
+            if (formData.rentalFamily !== undefined) populateField('rentalFamily', formData.rentalFamily);
+            if (formData.companyProvided !== undefined) populateField('companyProvided', formData.companyProvided);
+
+            // Address change options - IMPORTANT FIX
+            if (formData.addressChange !== undefined) populateField('addressChange', formData.addressChange);
+            if (formData.noAddressChange !== undefined) {
+              populateField('noAddressChange', formData.noAddressChange);
+      
+              
+              // CRITICAL FIX: If checkbox is checked via API, manually trigger address copy
+              if (formData.noAddressChange === true) {
+      
+                
+                // Get permanent address data from stored data or read from form fields
+                let permData = window.permanentAddressData;
+      
+                
+                // If no stored data OR incomplete data (missing flatNumber/roadName), read directly from permanent address fields
+                if (!permData || !permData.flatNumber || !permData.roadName) {
+      
+                  permData = {
+                    flatNumber: document.getElementById('permFlatNo')?.value || '',
+                    roadName: document.getElementById('permRoadName')?.value || '',
+                    city: document.getElementById('permCity')?.value || '',
+                    state: document.getElementById('permState')?.value || '',
+                    pincode: document.getElementById('permPinCode')?.value || '',
+                    country: document.getElementById('permCountry')?.value || 'India'
+                  };
+      
+                } else {
+      
+                }
+                
+                // Populate mailing address fields with permanent address data
+      
+      
+                populateField('flatNo', permData.flatNumber);
+                populateField('roadName', permData.roadName);
+                populateField('city', permData.city);
+                populateField('state', permData.state);
+                populateField('pinCode', permData.pincode);
+                populateField('country', permData.country);
+                
+      
+              }
+            }
+
+            // Marital status
+            if (formData.married !== undefined) populateField('married', formData.married);
+            if (formData.unmarried !== undefined) populateField('unmarried', formData.unmarried);
+            if (formData.othersMarital !== undefined) populateField('othersMarital', formData.othersMarital);
+
+            // Tax residency
+            if (formData.taxResidentOutsideIndia !== undefined) populateField('taxResidentOutsideIndia', formData.taxResidentOutsideIndia);
+
+            // Document types for identification
+            if (formData.passport !== undefined) populateField('passport', formData.passport);
+            if (formData.drivingLicense !== undefined) populateField('drivingLicense', formData.drivingLicense);
+            if (formData.aadhaarCard !== undefined) populateField('aadhaarCard', formData.aadhaarCard);
+            if (formData.electionCard !== undefined) populateField('electionCard', formData.electionCard);
+            if (formData.nregaCard !== undefined) populateField('nregaCard', formData.nregaCard);
+            if (formData.nprLetter !== undefined) populateField('nprLetter', formData.nprLetter);
+
+            // Address types for tax purposes
+            if (formData.sameAsPermAddress !== undefined) populateField('sameAsPermAddress', formData.sameAsPermAddress);
+            if (formData.residentialBusiness !== undefined) populateField('residentialBusiness', formData.residentialBusiness);
+            if (formData.business !== undefined) populateField('business', formData.business);
+            if (formData.registeredOffice !== undefined) populateField('registeredOffice', formData.registeredOffice);
+
+            // Residency details
+            if (formData.residentIndividual !== undefined) populateField('residentIndividual', formData.residentIndividual);
+            if (formData.nonResidentIndian !== undefined) populateField('nonResidentIndian', formData.nonResidentIndian);
+            if (formData.foreignNational !== undefined) populateField('foreignNational', formData.foreignNational);
+            if (formData.personOfIndianOrigin !== undefined) populateField('personOfIndianOrigin', formData.personOfIndianOrigin);
+
+            // Proof of address types - IMPORTANT FIX
+            if (formData.passportProof !== undefined) populateField('passportProof', formData.passportProof);
+            if (formData.voterIdProof !== undefined) populateField('voterIdProof', formData.voterIdProof);
+            if (formData.drivingLicenseProof !== undefined) populateField('drivingLicenseProof', formData.drivingLicenseProof);
+            if (formData.nregaJobCard !== undefined) populateField('nregaJobCard', formData.nregaJobCard);
+            if (formData.uidAadhaar !== undefined) {
+              populateField('uidAadhaar', formData.uidAadhaar);
+      
+            }
+            if (formData.nprLetterProof !== undefined) populateField('nprLetterProof', formData.nprLetterProof);
+
+            // Additional address types
+            if (formData.residentialBusinessAddress !== undefined) populateField('residentialBusinessAddress', formData.residentialBusinessAddress);
+            if (formData.businessAddress !== undefined) populateField('businessAddress', formData.businessAddress);
+            if (formData.registeredOfficeAddress !== undefined) populateField('registeredOfficeAddress', formData.registeredOfficeAddress);
+
+            // Form 60 checkbox
+            if (formData.form60 !== undefined) populateField('form60', formData.form60);
+
+    
+          }
+        }
+      });
+
+      // Handle "Same as permanent address" checkbox functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const sameAsPermAddressCheckbox = document.getElementById('sameAsPermAddress');
+        const noAddressChangeCheckbox = document.getElementById('noAddressChange');
+        
+        if (sameAsPermAddressCheckbox) {
+          sameAsPermAddressCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+              // Get permanent address data from stored data or read from form fields
+              let permData = window.permanentAddressData;
+              
+              // If no stored data, read directly from permanent address fields
+              if (!permData) {
+                permData = {
+                  flatNumber: document.getElementById('permFlatNo')?.value || '',
+                  roadName: document.getElementById('permRoadName')?.value || '',
+                  city: document.getElementById('permCity')?.value || '',
+                  state: document.getElementById('permState')?.value || '',
+                  pincode: document.getElementById('permPinCode')?.value || '',
+                  country: document.getElementById('permCountry')?.value || 'India'
+                };
+    
+              } else {
+    
+              }
+              
+              // Populate mailing address fields
+              populateField('flatNo', permData.flatNumber);
+              populateField('roadName', permData.roadName);
+              populateField('city', permData.city);
+              populateField('state', permData.state);
+              populateField('pinCode', permData.pincode);
+              populateField('country', permData.country);
+              
+    
+            } else {
+              // Clear mailing address fields when unchecked
+              clearField('flatNo');
+              clearField('roadName');
+              clearField('city');
+              clearField('state');
+              clearField('pinCode');
+              clearField('country');
+              
+    
+            }
+          });
+        }
+
+        // Handle "No change in mailing & permanent address" checkbox
+        if (noAddressChangeCheckbox) {
+          noAddressChangeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+              // Get permanent address data from stored data or read from form fields
+              let permData = window.permanentAddressData;
+    
+              
+              // If no stored data OR incomplete data (missing flatNumber/roadName), read directly from permanent address fields
+              if (!permData || !permData.flatNumber || !permData.roadName) {
+    
+                // Debug: Check if fields exist and have values
+                const permFlatNoField = document.getElementById('permFlatNo');
+                const permRoadNameField = document.getElementById('permRoadName');
+    
+    
+                
+                permData = {
+                  flatNumber: document.getElementById('permFlatNo')?.value || '',
+                  roadName: document.getElementById('permRoadName')?.value || '',
+                  city: document.getElementById('permCity')?.value || '',
+                  state: document.getElementById('permState')?.value || '',
+                  pincode: document.getElementById('permPinCode')?.value || '',
+                  country: document.getElementById('permCountry')?.value || 'India'
+                };
+    
+              } else {
+    
+              }
+              
+              // Populate mailing address fields
+    
+    
+              populateField('flatNo', permData.flatNumber);
+              populateField('roadName', permData.roadName);
+              populateField('city', permData.city);
+              populateField('state', permData.state);
+              populateField('pinCode', permData.pincode);
+              populateField('country', permData.country);
+              
+    
+            } else {
+              // Clear mailing address fields when unchecked
+              clearField('flatNo');
+              clearField('roadName');
+              clearField('city');
+              clearField('state');
+              clearField('pinCode');
+              clearField('country');
+              
+    
+            }
+          });
+        }
+        
+        // Enhanced clearField function to handle all input types
+        function clearField(fieldId) {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            if (field.type === 'checkbox' || field.type === 'radio') {
+              // For checkboxes and radio buttons, uncheck them
+              field.checked = false;
+            } else {
+              // For text inputs, textareas, selects, clear the value
+              field.value = '';
+            }
+            field.classList.remove('patched-field');
+          }
+        }
+        
+        // Enhanced populateField function to handle all input types
+        function populateField(fieldId, value) {
+          const field = document.getElementById(fieldId);
+          if (field && (value !== null && value !== undefined && value !== '')) {
+            if (field.type === 'checkbox' || field.type === 'radio') {
+              // For checkboxes and radio buttons, set the checked property
+              field.checked = Boolean(value);
+              if (field.checked) {
+                field.classList.add('patched-field');
+              }
+            } else {
+              // For text inputs, textareas, selects, set the value
+              field.value = value;
+              field.classList.add('patched-field');
+            }
+            return true;
+          }
+          return false;
+        }
+      });
+
+      // Consolidated message handler for all iframe-parent communication
+      window.addEventListener('message', function(event) {
+        const { type, source } = event.data;
+
+        
+        if (source !== 'parent') return; // Only handle messages from parent
+        
+        // Helper function to collect all form data
+        function collectFormData() {
+          const formData = {};
+          const inputs = document.querySelectorAll('input, select, textarea');
+
+          
+          inputs.forEach(function(input) {
+            const fieldKey = input.id || input.name;
+            if (fieldKey) { // Only include fields with ID or name
+              if (input.type === 'checkbox' || input.type === 'radio') {
+                formData[fieldKey] = input.checked;
+              } else {
+                formData[fieldKey] = input.value || '';
+              }
+            }
+          });
+          
+          return formData;
+        }
+        
+        // Handle different message types
+        switch (type) {
+          case 'TRIGGER_SAVE':
+  
+            try {
+              const formData = collectFormData();
+    
+              
+              window.parent.postMessage({
+                type: 'SAVE_DATA',
+                source: 'kyc-form',
+                payload: formData
+              }, '*');
+            } catch (error) {
+    
+            }
+            break;
+            
+          case 'TRIGGER_SUBMIT':
+  
+            try {
+              const formData = collectFormData();
+    
+    
+              
+              window.parent.postMessage({
+                type: 'SUBMIT_DATA',
+                source: 'kyc-form',
+                payload: formData
+              }, '*');
+              
+    
+            } catch (error) {
+    
+              window.parent.postMessage({
+                type: 'SUBMIT_DATA_ERROR',
+                source: 'kyc-form',
+                error: error.message
+              }, '*');
+            }
+            break;
+            
+          case 'CHECK_ALL_REQ_INPUT_FILLED':
+            // Use enhanced validation function that includes section title highlighting
+            try {
+              checkAllReqInputFilled();
+            } catch (error) {
+              console.error('Error in enhanced validation:', error);
+              
+              // Fallback to simple validation if enhanced function fails
+              let allFilled = true;
+              const requiredInputs = document.querySelectorAll('input[required], select[required], textarea[required]');
+              
+              requiredInputs.forEach(function(input) {
+                if (!input.value || input.value.trim() === '') {
+                  allFilled = false;
+                }
+              });
+              
+              window.parent.postMessage({
+                type: 'CHECK_ALL_REQ_INPUT_FILLED_RESPONSE',
+                source: 'kyc-form',
+                isFilled: allFilled,
+                validationType: 'INDIVIDUAL_KYC'
+              }, '*');
+            }
+            break;
+            
+          case 'GET_RENDERED_HTML':
+  
+            try {
+              const htmlContent = document.documentElement.outerHTML;
+    
+              
+              window.parent.postMessage({
+                type: 'RENDERED_HTML_RESPONSE',
+                source: 'kyc-form',
+                payload: htmlContent
+              }, '*');
+            } catch (error) {
+    
+            }
+            break;
+            
+          default:
+            // Ignore unknown message types
+            break;
+        }
+      });
+    </script>
+  </head>
+
+  <body id="pdf-container">
+    <!-- Page 1 -->
+    <div class="pdf-page page1">
+      <!-- Header -->
+      <section id="form-header" class="form-section">
+        <div class="logo_wrapper">
+          <!-- <img src="../../images/logo/hdfc.webp" alt="HDFC BANK" /> -->
+          <!-- <div style="border: 1px solid #99a1af; padding: 0.5rem; font-weight: bold; font-size: 12px;">
+            🏦 HDFC BANK
+          </div> -->
+        </div>
+
+        <div class="header_text">
+          <h4>KYC form for</h4>
+          <h4>Resident Individuals</h4>
+          <p>{All fields with * are mandatory}</p>
+        </div>
+
+        <div class="photo_placeholder">
+          <div class="photo_box">
+            <p class="photo_text">Please affix recent photo</p>
+          </div>
+          <div class="sign_across">
+            <p>Sign Across</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Personal Information (A) -->
+      <section id="personal-information" class="form-section">
+        <p class="section-title">PERSONAL (A)</p>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="customerId" class="text-nowrap">Customer ID</label>
+            <input type="text" id="customerId" />
+          </div>
+          <div class="form-container">
+            <label for="accountNumber" class="text-nowrap">Account Number</label>
+            <input type="text" id="accountNumber" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="customerName" class="text-nowrap">Customer Name<span class="required-asterisk">*</span></label>
+            <input type="text" id="customerName" />
+          </div>
+          <div class="form-container">
+            <label for="dateOfBirth" class="text-nowrap">Date of Birth<span class="required-asterisk">*</span></label>
+            <input type="text" id="dateOfBirth" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="firstName" class="text-nowrap">First Name<span class="required-asterisk">*</span></label>
+            <input type="text" id="firstName" />
+          </div>
+          <div class="form-container">
+            <label for="lastName" class="text-nowrap">Last Name<span class="required-asterisk">*</span></label>
+            <input type="text" id="lastName" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="panNumber" class="text-nowrap">PAN Number<span class="required-asterisk">*</span></label>
+            <input type="text" id="panNumber" />
+          </div>
+          <div class="form-container">
+            <div class="checkbox_wrapper">
+              <input type="checkbox" name="form60" id="form60" />
+              <label for="form60" class="text-nowrap">Form 60 in case of No PAN</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Occupation & Income (B) -->
+      <section id="occupation-income" class="form-section">
+        <p class="section-title">OCCUPATION & INCOME (B)</p>
+
+        <div class="occupation-grid">
+          <div class="occupation-row">
+            <label class="occupation-label">Occupation (Financial employed with):<span class="required-asterisk">*</span></label>
+            <div class="occupation-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="salaried" id="salaried" />
+                <label for="salaried">Salaried</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="selfEmployed" id="selfEmployed" />
+                <label for="selfEmployed">Self-employed</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="retired" id="retired" />
+                <label for="retired">Retired</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="selfEmployedProfessional" id="selfEmployedProfessional" />
+                <label for="selfEmployedProfessional">Self-employed Professional</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="student" id="student" />
+                <label for="student">Student</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="housewife" id="housewife" />
+                <label for="housewife">Housewife</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="politician" id="politician" />
+                <label for="politician">Politician</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersOccupation" id="othersOccupation" />
+                <label for="othersOccupation">Others</label>
+                <input type="text" class="others-input" id="othersOccupationInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="employment-row">
+            <div class="employment-left">
+            </div>
+            <div class="employment-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="privateLimited" id="privateLimited" />
+                <label for="privateLimited">Private Limited</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="proprietorship" id="proprietorship" />
+                <label for="proprietorship">Proprietorship</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="publicSector" id="publicSector" />
+                <label for="publicSector">Public sector</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="multinational" id="multinational" />
+                <label for="multinational">Multinational</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="partnership" id="partnership" />
+                <label for="partnership">Partnership</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="publicLimited" id="publicLimited" />
+                <label for="publicLimited">Public Limited</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="government" id="government" />
+                <label for="government">Government</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersEmployment" id="othersEmployment" />
+                <label for="othersEmployment">Others</label>
+                <input type="text" class="others-input" id="othersEmploymentInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="pep-row">
+            <label class="pep-label">Please Tick if Relative or Close Associate of PEP</label>
+            <div class="pep-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="pepYes" id="pepYes" />
+                <label for="pepYes">Yes</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="pepNo" id="pepNo" />
+                <label for="pepNo">No</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="self-employed-section">
+            <label class="section-label">Self Employed Professional (Please Tick):</label>
+            <div class="self-employed-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="cacsicwacma" id="cacsicwacma" />
+                <label for="cacsicwacma">CA / CS / ICWA / CMA</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="lawyer" id="lawyer" />
+                <label for="lawyer">Lawyer</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="doctor" id="doctor" />
+                <label for="doctor">Doctor</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="architect" id="architect" />
+                <label for="architect">Architect</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="itConsultant" id="itConsultant" />
+                <label for="itConsultant">IT Consultant</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersProfessional" id="othersProfessional" />
+                <label for="othersProfessional">Others</label>
+                <input type="text" class="others-input" id="othersProfessionalInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="nature-business-section">
+            <label class="section-label">Nature of Business (Please Tick):</label>
+            <div class="nature-business-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="agriculture" id="agriculture" />
+                <label for="agriculture">Agriculture</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="stockBroker" id="stockBroker" />
+                <label for="stockBroker">Stock Broker</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="realEstate" id="realEstate" />
+                <label for="realEstate">Real Estate</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="manufacturing" id="manufacturing" />
+                <label for="manufacturing">Manufacturing</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="serviceProvider" id="serviceProvider" />
+                <label for="serviceProvider">Service Provider</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="trader" id="trader" />
+                <label for="trader">Trader</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersBusiness" id="othersBusiness" />
+                <label for="othersBusiness">Others</label>
+                <input type="text" class="others-input" id="othersBusinessInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="business-type-section">
+            <label class="section-label">Type of business/ Type of firm:</label>
+            <div class="business-type-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="partnership" id="partnershipBusiness" />
+                <label for="partnershipBusiness">Partnership</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="privateLimited" id="privateLimitedBusiness" />
+                <label for="privateLimitedBusiness">Private Limited Co.</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="publicLimited" id="publicLimitedBusiness" />
+                <label for="publicLimited">Public Limited Co.</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="soleProprietorship" id="soleProprietorship" />
+                <label for="soleProprietorship">Sole Proprietorship</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersBusinessType" id="othersBusinessType" />
+                <label for="othersBusinessType">Others</label>
+                <input type="text" class="others-input" id="othersBusinessTypeInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="income-section">
+            <label class="section-label">Gross Annual Income (Please Tick):<span class="required-asterisk">*</span></label>
+            <div class="income-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income1" id="income1" />
+                <label for="income1">&lt; 50,000</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income2" id="income2" />
+                <label for="income2">50,000-1 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income3" id="income3" />
+                <label for="income3">1-3 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income4" id="income4" />
+                <label for="income4">3-5 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income5" id="income5" />
+                <label for="income5">5-7.5 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income6" id="income6" />
+                <label for="income6">7.5-10 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income7" id="income7" />
+                <label for="income7">10-15 Lac</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="income8" id="income8" />
+                <label for="income8">&gt; 15-25 Lac</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="source-income-section">
+            <label class="section-label">Source of Income:</label>
+            <div class="source-income-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="salary" id="salary" />
+                <label for="salary">Salary</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="agricultureIncome" id="agricultureIncome" />
+                <label for="agricultureIncome">Agriculture</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="businessIncome" id="businessIncome" />
+                <label for="businessIncome">Business Income</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="investmentIncome" id="investmentIncome" />
+                <label for="investmentIncome">Investment Income</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="othersIncome" id="othersIncome" />
+                <label for="othersIncome">Others</label>
+                <input type="text" class="others-input" id="othersIncomeInput" style="display: none;" placeholder="Please specify" />
+              </div>
+            </div>
+          </div>
+
+          <div class="residence-section">
+            <label class="section-label">Residence Type:<span class="required-asterisk">*</span></label>
+            <div class="residence-checkboxes">
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="owned" id="owned" />
+                <label for="owned">Owned</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="rentalFamily" id="rentalFamily" />
+                <label for="rentalFamily">Rental/ Family</label>
+              </div>
+              <div class="checkbox_wrapper">
+                <input type="checkbox" name="companyProvided" id="companyProvided" />
+                <label for="companyProvided">Company Provided</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="address-change-section">
+            <div class="checkbox_wrapper">
+              <input type="checkbox" name="addressChange" id="addressChange" />
+              <label for="addressChange">There is change in my mailing address & contact details</label>
+            </div>
+            <div class="checkbox_wrapper">
+              <input type="checkbox" name="noAddressChange" id="noAddressChange" />
+              <label for="noAddressChange">There is no change in mailing & permanent address</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mailing Address & Contact (C) -->
+      <section id="mailing-address" class="form-section">
+        <p class="section-title">MAILING ADDRESS & CONTACT (C)</p>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="flatNo" class="text-nowrap">Flat no/ Bldg Name</label>
+            <input type="text" id="flatNo" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="roadName" class="text-nowrap">Road Name<span class="required-asterisk">*</span></label>
+            <input type="text" id="roadName" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="landmark" class="text-nowrap">Landmark</label>
+            <input type="text" id="landmark" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="city" class="text-nowrap">City<span class="required-asterisk">*</span></label>
+            <input type="text" id="city" />
+          </div>
+          <div class="form-container">
+            <label for="pinCode" class="text-nowrap">PIN Code<span class="required-asterisk">*</span></label>
+            <input type="text" id="pinCode" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="state" class="text-nowrap">State<span class="required-asterisk">*</span></label>
+            <input type="text" id="state" />
+          </div>
+          <div class="form-container">
+            <label for="country" class="text-nowrap">Country<span class="required-asterisk">*</span></label>
+            <input type="text" id="country" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="telR" class="text-nowrap">Tel. (R)</label>
+            <input type="text" id="telR" />
+          </div>
+          <div class="form-container">
+            <label for="telO" class="text-nowrap">Tel. (O)</label>
+            <input type="text" id="telO" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="email" class="text-nowrap">E-mail ID<span class="required-asterisk">*</span></label>
+            <input type="text" id="email" />
+          </div>
+          <div class="form-container">
+                                <label for="mobile" class="text-nowrap">Mobile Number<span class="required-asterisk">*</span></label>
+            <input type="text" id="mobile" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Permanent Address (D) -->
+      <section id="permanent-address" class="form-section">
+        <p class="section-title">PERMANENT ADDRESS (D)</p>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="permFlatNo" class="text-nowrap">Flat no/ Bldg Name</label>
+            <input type="text" id="permFlatNo" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="permRoadName" class="text-nowrap">Road Name<span class="required-asterisk">*</span></label>
+            <input type="text" id="permRoadName" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="permLandmark" class="text-nowrap">Landmark</label>
+            <input type="text" id="permLandmark" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="permCity" class="text-nowrap">City<span class="required-asterisk">*</span></label>
+            <input type="text" id="permCity" />
+          </div>
+          <div class="form-container">
+            <label for="permPinCode" class="text-nowrap">PIN Code<span class="required-asterisk">*</span></label>
+            <input type="text" id="permPinCode" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-container">
+            <label for="permState" class="text-nowrap">State<span class="required-asterisk">*</span></label>
+            <input type="text" id="permState" />
+          </div>
+          <div class="form-container">
+            <label for="permCountry" class="text-nowrap">Country<span class="required-asterisk">*</span></label>
+            <input type="text" id="permCountry" />
+          </div>
+        </div>
+
+        <div class="form-row branch-codes">
+          <div class="form-container">
+            <label for="branchCode" class="text-nowrap">Branch Code</label>
+            <input type="text" id="branchCode" />
+          </div>
+          <div class="form-container">
+            <label for="lgCode" class="text-nowrap">LG Code</label>
+            <input type="text" id="lgCode" />
+          </div>
+        </div>
+      </section>
+
+
+    </div>
+
+    <!-- Page 2 -->
+    <div class="pdf-page">
+      <!-- Extended KYC (E) -->
+      <section id="extended-kyc" class="form-section">
+        <p class="section-title">EXTENDED KYC (E)</p>
+
+        <div class="extended-kyc-table">
+          <div class="table-header">
+            <div class="section-a-header">Section A</div>
+            <div class="section-b-header">Section B</div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <div class="inline-field">
+                <label class="field-label">Maiden Name (if any)</label>
+                <input type="text" id="maidenName" class="inline-input" />
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="foreign-tax-info">
+                <p class="info-text">Foreign tax residency details if any (Please consult your professional tax advisor for further guidance on your tax residency, if required)</p>
+                <div class="checkbox_wrapper" style="width: 364px;">
+                  <input type="checkbox" name="taxResidentOutsideIndia" id="taxResidentOutsideIndia" />
+                  <label for="taxResidentOutsideIndia" style="display: flex;
+                      overflow: visible;
+                      white-space: normal;
+                      word-break: break-word;
+                      width: 100%;">Please Tick, if you are a tax resident of any country outside India. If you do not tick, it is your affirmation that you are a tax resident of India and not of any other foreign country.</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <div class="inline-field">
+                <label class="field-label">Father's Name (mandatory)<span class="required-asterisk">*</span></label>
+                <input type="text" id="fatherName" class="inline-input" />
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="inline-field">
+                <label class="field-label">Country(ies) of Tax residency</label>
+                <input type="text" id="countryTaxResidency" class="inline-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <div class="inline-field">
+                <label class="field-label">Spouse's Name</label>
+                <input type="text" id="spouseName" class="inline-input" />
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="inline-field">
+                <label class="field-label">Tax Identification Number (TIN)</label>
+                <input type="text" id="tinNumber" class="inline-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <label class="field-label">Marital Status<span class="required-asterisk">*</span></label>
+              <div class="checkbox-group-compact">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="married" id="married" />
+                  <label for="married">Married</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="unmarried" id="unmarried" />
+                  <label for="unmarried">Unmarried</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="othersMarital" id="othersMarital" />
+                  <label for="othersMarital">Others</label>
+                </div>
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="inline-field">
+                <label class="field-label">Identification Type (TIN or other, please specify)</label>
+                <input type="text" id="identificationType" class="inline-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <label class="field-label">Identification Type<span class="required-asterisk">*</span></label>
+              <div class="checkbox-group-compact">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="passport" id="passport" />
+                  <label for="passport">Passport Date of Expiry</label>
+                  <input type="text" class="date-input" placeholder="DD/MM/YYYY" />
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="drivingLicense" id="drivingLicense" />
+                  <label for="drivingLicense">Driving License Date of Expiry</label>
+                  <input type="text" class="date-input" placeholder="DD/MM/YYYY" />
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="aadhaarCard" id="aadhaarCard" />
+                  <label for="aadhaarCard">Aadhaar card / letter</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="electionCard" id="electionCard" />
+                  <label for="electionCard">Election / Voter's ID card</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="nregaCard" id="nregaCard" />
+                  <label for="nregaCard">NREGA Card</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="nprLetter" id="nprLetter" />
+                  <label for="nprLetter">NPR Letter</label>
+                </div>
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="address-tax-section">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="sameAsPermAddress" id="sameAsPermAddress" />
+                  <label for="sameAsPermAddress">Same as permanent address</label>
+                </div>
+                <p class="sub-label">Please tick if your address for tax purposes is other than your Mailing address</p>
+                <div class="checkbox-group-compact">
+                  <div class="checkbox_wrapper">
+                    <input type="checkbox" name="residentialBusiness" id="residentialBusiness" />
+                    <label for="residentialBusiness">Residential and Business</label>
+                  </div>
+                  <div class="checkbox_wrapper">
+                    <input type="checkbox" name="business" id="business" />
+                    <label for="business">Business</label>
+                  </div>
+                  <div class="checkbox_wrapper">
+                    <input type="checkbox" name="registeredOffice" id="registeredOffice" />
+                    <label for="registeredOffice">Registered Office</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <div class="inline-field">
+                <label class="field-label">Identification Number - for the identification type mentioned above<span class="required-asterisk">*</span></label>
+                <input type="text" id="identificationNumber" class="inline-input" />
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="tax-update-section">
+                <div class="inline-field">
+                  <label class="field-label">Please Upate if Tax resident outside India/Nationality is other than India</label>
+                  <input type="text" id="taxResidentUpdate" class="inline-input" />
+                </div>
+                <div class="inline-field">
+                  <label class="field-label">Please Mention if your Country of Birth is other than India</label>
+                  <input type="text" id="countryOfBirth" class="inline-input" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <label class="field-label">Please mention your Residency details, if it is any one of these</label>
+              <div class="checkbox-group-compact">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="residentIndividual" id="residentIndividual" />
+                  <label for="residentIndividual">Resident Individual</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="nonResidentIndian" id="nonResidentIndian" />
+                  <label for="nonResidentIndian">Non Resident Indian</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="foreignNational" id="foreignNational" />
+                  <label for="foreignNational">Foreign National</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="personOfIndianOrigin" id="personOfIndianOrigin" />
+                  <label for="personOfIndianOrigin">Person of Indian Origin</label>
+                </div>
+              </div>
+            </div>
+            <div class="section-b">
+              <div class="inline-field">
+                <label class="field-label">City of Birth</label>
+                <input type="text" id="cityOfBirth" class="inline-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <label class="field-label">Proof of Address<span class="required-asterisk">*</span></label>
+              <div class="checkbox-group-compact">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="passportProof" id="passportProof" />
+                  <label for="passportProof">Passport</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="voterIdProof" id="voterIdProof" />
+                  <label for="voterIdProof">Voter Identity Card</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="drivingLicenseProof" id="drivingLicenseProof" />
+                  <label for="drivingLicenseProof">Driving License</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="nregaJobCard" id="nregaJobCard" />
+                  <label for="nregaJobCard">NREGA Job Card</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="uidAadhaar" id="uidAadhaar" />
+                  <label for="uidAadhaar">UID (Aadhaar)</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="nprLetterProof" id="nprLetterProof" />
+                  <label for="nprLetterProof">NPR Letter</label>
+                </div>
+              </div>
+            </div>
+            <div class="section-b"></div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <label class="field-label">Please tick if Address Type is other than Residential</label>
+              <div class="checkbox-group-compact">
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="residentialBusinessAddress" id="residentialBusinessAddress" />
+                  <label for="residentialBusinessAddress">Residential and Business</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="businessAddress" id="businessAddress" />
+                  <label for="businessAddress">Business</label>
+                </div>
+                <div class="checkbox_wrapper">
+                  <input type="checkbox" name="registeredOfficeAddress" id="registeredOfficeAddress" />
+                  <label for="registeredOfficeAddress">Registered Office</label>
+                </div>
+              </div>
+            </div>
+            <div class="section-b"></div>
+          </div>
+
+          <div class="table-row">
+            <div class="section-a">
+              <div class="inline-field">
+                <label class="field-label">Nationality (if national of more than one country, please mention all the countries separated by a comma)<span class="required-asterisk">*</span></label>
+                <input type="text" id="nationality" class="inline-input" />
+              </div>
+            </div>
+            <div class="section-b"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Aadhaar Consent Declaration (F) -->
+      <section id="aadhaar-consent" class="form-section">
+        <p class="section-title">AADHAAR CONSENT DECLARATION (F)</p>
+
+        <div class="consent-content">
+          <p class="consent-header"><strong>Aadhaar Non DBT Consent</strong></p>
+
+          <div class="consent-text">
+            <p><strong>1.</strong> I voluntarily opt for Aadhaar OVD KYC or e-KYC or offline verification, and submit to the BANK my Aadhaar number, Virtual ID, e-Aadhaar, XML, Masked Aadhaar, Aadhaar details, demographic information, identity information, Aadhaar registered mobile, face authentication details and/or biometric information (collectively information)</p>
+
+            <p><strong>2.</strong> I am informed by the Bank, that:</p>
+            <p>(i). submission of Aadhaar is not mandatory and there are alternative options for KYC and establishing identity including by way of physical KYC with officially valid documents other than Aadhaar. All options were given to me.</p>
+            <p>(ii) For e-KYC / authentication verification, Bank will share Aadhaar number and/or biometric with CIDR/UIDAI and CIDR/UIDAI will share with Bank, authentication data, Aadhaar data demographic details, registered mobile number, identity information which shall be used for the informed purposes mentioned in 3 below.</p>
+
+            <p><strong>3.</strong> I authorise and give my consent to the Bank (and its service providers), for following informed purposes:</p>
+            <p>(i). KYC and periodic KYC process as per the PML Act 2002 and rules thereunder and RBI guidelines, or for establishing my identity, carrying out my identification, offline verification or e-KYC or Yes/No authentication, demographic or other authentication/verification/notification as may be permitted as per applicable law for all accounts, facilities, services and relationships of/through the Bank, existing and future.</p>
+            <p>(ii). collecting, sharing, storing, preserving information, maintaining records and using the information and authentication/verificaiton/identificaiton records: (a), for the informed purpose above, (b) as well as for regulatory and legal reporting and filing and/or (c) where required under applicable law.</p>
+            <p>(iii) enabling my account for Aadhaar enabled Payment Services (AEPS).</p>
+
+            <p><strong>4.</strong> I Understand that the Aadhaar number and coro biometrics will not be stored/shared except as per law and for CIDR submission. I have downloaded the e-Aadhaar myself using the OTP received on my Aadhaar registered mobile number. I will not hold the Bank or its officials responsible in the event this document is not found to be in order or in case of any incorrect information provided by me.</p>
+
+            <p><strong>5.</strong> The above consent and purpose of collecting information has been explained to me in my local language.</p>
+          </div>
+
+          <div class="combined-bottom-box">
+            <div class="declaration-section">
+              <div class="section-header">
+              <p><strong>DECLARATION</strong></p>
+            </div>
+            <div class="declaration-content">
+                <div class="declaration-text">
+              <p>I declare that the information provided with respect to my account is up to date and correct.</p>
+              <p>I have also attached my recent photograph.</p>
+                </div>
+              <div class="signature-area">
+                  <div class="signature-box">
+                    <p>Applicant Signature</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <div class="bank-use-section">
+              <div class="section-header">
+                <p><strong>FOR BANK USE</strong></p>
+              </div>
+            
+            <div class="bank-use-content">
+                <div class="form-line">
+                  <span>Sourcing Branch Name ____________________________________</span>
+                  <span class="documents-received">
+                    Documents Received: 
+                    <label><input type="checkbox" disabled /> Self Certified</label>
+                    <label><input type="checkbox" disabled /> True Copies</label>
+                    <label><input type="checkbox" disabled /> Notary</label>
+                  </span>
+              </div>
+
+                <div class="form-line">
+                  <span>Employee Name: _________________ Employee Code _____________ Employee Designation: _________________</span>
+              </div>
+
+                <div class="form-line">
+                  <span>Sourcing Employee Branch Name: _________________________ Branch Code _______________</span>
+              </div>
+
+                <div class="form-line">
+                  <span>Signature verified and form approved by BDA/BM employee code _________________ Signature & Date _______________________</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+                     <div class="customer-acknowledgment-section">
+            <div class="dashed-separator"></div>
+            
+             <div class="acknowledgment-header">
+               <p><strong>CUSTOMER ACKNOWLEDGEMENT COPY</strong></p>
+             </div>
+
+            <div class="acknowledgment-line">
+              <span>Reference Number ________________________________ Acknowledgement Date _________________ Signature of Bank Official __________________________</span>
+               </div>
+           </div>
+         </div>
+      </section>
+
+
+    </div>
+    
+    <!-- Include KYC JavaScript for validation -->
+    <script src="./kyc.js"></script>
+  </body>
+</html> 

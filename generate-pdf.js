@@ -15,7 +15,14 @@ if (!fs.existsSync(OUTPUT_FOLDER)) {
 async function generatePdf(data, type, attempt = 0) {
   const applicationId = data.applicationId;
   const outputPath = path.join(OUTPUT_FOLDER, `${applicationId}-${Date.now()}.pdf`);
-  const htmlPath = `file://${path.join(TEMPLATE_FOLDER, type, `${type}.html`)}`;
+  // Handle special type mapping for individual-kyc
+  let templatePath;
+  if (type === 'individual-kyc') {
+    templatePath = path.join(TEMPLATE_FOLDER, 'individual', 'kyc', 'kyc.html');
+  } else {
+    templatePath = path.join(TEMPLATE_FOLDER, type, `${type}.html`);
+  }
+  const htmlPath = `file://${templatePath}`;
 
   const browser = await puppeteer.launch({
     headless: "new",

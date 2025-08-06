@@ -32,7 +32,14 @@ async function generateKycusReportPdf(data, type, attempt = 0) {
   
   const applicationId = transformedData.entityId || transformedData.applicationId || "KYCUS";
   const outputPath = path.join(OUTPUT_FOLDER, `${applicationId}-${Date.now()}.pdf`);
-  const htmlPath = `file://${path.join(TEMPLATE_FOLDER, "kycusReport", "report.html")}`;
+  // Handle special type mapping for individual-kyc
+  let templatePath;
+  if (type === 'individual-kyc') {
+    templatePath = path.join(TEMPLATE_FOLDER, 'individual', 'kycusReport', 'individual-report.html');
+  } else {
+    templatePath = path.join(TEMPLATE_FOLDER, 'kycusReport', 'report.html');
+  }
+  const htmlPath = `file://${templatePath}`;
 
   const browser = await puppeteer.launch({
     headless: "new",
