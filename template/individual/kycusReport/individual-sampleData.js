@@ -1,232 +1,275 @@
-const individualData = {
-  _id: "68762915af70c4864d40fe52",
-  applicationId: "INDIVIDUAL-KYC00123",
-  
-  // Personal Information
-  customerName: "Rajesh Kumar Sharma",
-  firstName: "Rajesh",
-  lastName: "Sharma",
-  fatherName: "Suresh Kumar Sharma",
-  dateOfBirth: "1985-06-15T00:00:00.000Z",
-  email: "rajesh.sharma@example.com",
-  mobile: "9876543210",
-  panNumber: "ABCDE1234F",
-  nationality: "Indian",
-  
-  // Address Information
+const individualSampleData = {
+  _id: "688e51c3d0adb06f43a75ceb",
+  applicationId: "KYCAPP00150",
+  entityName: "Vinodhan Gopinath",
+  entityType: "INDIVIDUAL",
+  cin: "",
+  llpin: "",
+  pan: "DNGPG7456I",
+  customerId: "",
+  reason: "KYC Application",
+
+  authorizedSignatories: [
+    {
+      fullName: "Vinodhan Gopinath",
+      emailAddress: "vinodhan.gopinath@example.com",
+      phoneNumber: "9876543210",
+      dateOfBirth: "1985-06-15",
+      // title: "MR", // Will default to MR if not provided or if it's a generic description
+      pan: "DNGPG7456I",
+      personalDocuments: {
+        proofOfIdentity: {
+          data: {
+            fileName: "Nishanthan Pan Card.pdf",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_documents",
+            extractedContent: {
+              name: "Vinodhan G",
+              PAN_Number: "CXKPN9255M",
+              dateOfBirth: "02/12/2001"
+            },
+            verificationData: {
+              verifiedOn: "2025-08-05T19:36:57.745Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+          options: [
+            {
+              selectedType: "personalpan",
+              label: "Proof of Identity",
+              type: "proofOfIdentity",
+              acceptedTypes: "pdf, jpg, jpeg, png"
+            }
+          ]
+        },
+        proofOfAddress: {
+          data: {
+            fileName: "vinodhan_aadhaar.pdf",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_document",
+            extractedContent: {
+              name: "Vinodhan Gopinath",
+              address: "S/O: Gopinath, No 25, PERUMAL SOUTH STREET, Nagore (Kottagam), Nagapat",
+              fatherName: "Gopinath",
+              aadhaarNumber: "9956 9998 4385",
+              dateOfBirth: "02/12/2001"
+            },
+            verificationData: {
+              verifiedOn: "2025-08-05T19:36:57.745Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+          options: [
+            {
+              selectedType: "aadhar",
+              label: "Proof of Address",
+              type: "proofOfAddress",
+              acceptedTypes: "pdf, jpg, jpeg, png"
+            }
+          ]
+        },
+        photograph: {
+          data: {
+            fileName: "vinodhan_photograph.jpg",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_photograph",
+            verificationData: {
+              verifiedOn: "2025-08-05T19:36:57.745Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+          label: "Upload Photograph",
+          acceptedTypes: "jpg, jpeg, png",
+          type: "photograph"
+        },
+        specimenSignature: {
+          data: {
+            fileName: "vinodhan_signature.jpg",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_signature",
+            verificationData: {
+              verifiedOn: "2025-08-05T19:36:57.745Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+          label: "Upload Specimen Signature",
+          acceptedTypes: "jpg, jpeg, png",
+          type: "signature"
+        }
+      }
+    }
+  ],
+
+  entityDocs: {},
+
+  mailingAddress: {
   roadName: "Plot No. 123, Sector 45",
   city: "Gurgaon",
   state: "Haryana",
   country: "India",
-  pinCode: "122001",
-  
-  // Permanent Address
-  permRoadName: "House No. 456, MG Road",
-  permCity: "Delhi",
-  permState: "Delhi",
-  permCountry: "India",
-  permPinCode: "110001",
-  
-  // Personal Details - Marital Status (one will be true)
-  married: true,
-  single: false,
-  divorced: false,
-  widowed: false,
-  
-  // Financial Details - Gross Annual Income (one will be true)
-  income0to1lakh: false,
-  income1to5lakh: false,
-  income5to10lakh: true,
-  income10to25lakh: false,
-  incomeAbove25lakh: false,
-  
-  // Occupation Details (one will be true)
-  service: true,
-  business: false,
-  professional: false,
-  selfEmployed: false,
-  retired: false,
-  housewife: false,
-  student: false,
-  others: false,
-  
-  // Residence Type (one will be true)
-  owned: true,
-  rented: false,
-  parental: false,
-  company: false,
-  
-  // Identification Type checkboxes
-  passport: false,
-  drivingLicense: false,
-  aadhaarCard: true,
-  electionCard: false,
-  nregaCard: false,
-  nprLetter: false,
-  
-  // Proof of Address checkboxes
-  uidAadhaar: true,
-  drivingLicenseProof: false,
-  passportProof: false,
-  electricityBill: false,
-  internetBill: false,
-  gasBill: false,
-  landlineBill: false,
-  bankStatement: false,
-  nprLetterProof: false,
-  
-  // Documents
-  documents: {
-    proofOfIdentity: {
-      fileName: "aadhaar_card_rajesh.pdf",
-      s3Url: "https://ebi-kycus.s3.amazonaws.com/individual-kyc/INDIVIDUAL-KYC00123/documents/aadhaar_card_rajesh.pdf",
-      uploadedAt: "2025-01-15T10:30:00.000Z",
-      isVerified: true,
-      validationType: "Digilocker",
-      extractedContent: {
-        name: "Rajesh Kumar Sharma",
-        fatherName: "Suresh Kumar Sharma",
-        dateOfBirth: "15/06/1985",
-        address: "Plot No. 123, Sector 45, Gurgaon, Haryana - 122001",
-        aadhaarNumber: "123456789012"
-      }
-    },
-    proofOfAddress: {
-      fileName: "aadhaar_address_proof.pdf",
-      s3Url: "https://ebi-kycus.s3.amazonaws.com/individual-kyc/INDIVIDUAL-KYC00123/documents/aadhaar_address_proof.pdf",
-      uploadedAt: "2025-01-15T10:35:00.000Z",
-      isVerified: true,
-      validationType: "Digilocker",
-      extractedContent: {
-        name: "Rajesh Kumar Sharma",
-        address: "Plot No. 123, Sector 45, Gurgaon, Haryana - 122001",
-        aadhaarNumber: "123456789012"
-      }
-    }
+    pinCode: "122001"
   },
-  
-  // Application timestamps
-  submittedAt: "2025-01-15T10:00:00.000Z",
-  updatedAt: "2025-01-15T11:00:00.000Z",
-  createdAt: "2025-01-15T09:30:00.000Z",
-  
-  // Application status
-  status: "COMPLETED",
-  currentStep: "complete",
-  isEsignCompleted: true,
-  
-  // Stepper information
+
+  registeredAddress: {
+    roadName: "Plot No. 123, Sector 45",
+    city: "Gurgaon",
+    state: "Haryana",
+    country: "India",
+    pinCode: "122001"
+  },
+
   stepper: [
     { key: 0, label: "Documents", isCompleted: true },
     { key: 1, label: "Form", isCompleted: true },
     { key: 2, label: "Complete", isCompleted: true }
   ],
   
-  // Additional metadata
-  submittedByBankerId: "6860c98570dd7b6bfbe4693f",
-  submittedByBankerName: "Bank Officer Name",
-  submittedByBankerEmail: "officer@bank.com",
-  
-  _class: "com.ebitaus.kycus.features.banker.individual.kyc.entity.IndividualKycApplication"
+  currentStep: 1,
+  isEsignInitiated: true,
+  isVkycInitiated: false,
+  submittedByBankerId: "68762b6eaf70c4864d40fe5d",
+  submittedByBankerName: "Vinoth",
+  submittedByBankerEmail: "vinodhan.gopinath@ebitaus.com",
+  submittedAt: "2025-01-15T12:58:27.597Z",
+  updatedAt: "2025-01-15T16:40:00.426Z",
+  reportS3Url: "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00150/report/kyc_form_175.pdf",
+  toBeSignedReportS3Url: "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00150/report/toBeSigned/toBeSigned.pdf",
+  esignDocId: "ac4f2fba-c9a1-4cd3-8977-13ca23ae675b",
+  isSigningCompleted: false,
+  esignType: "aadharEsign",
+
+  esignUserDetails: {
+    name: "Vinodhan Gopinath",
+    mobile: "9876543210",
+    email: "vinodhan.gopinath@example.com"
+  },
+
+  status: "ESIGN_PENDING",
+  kycFormStatus: "Completed",
+  _class: "com.ebitaus.kycus.features.banker.kyc.entity.KycApplication"
 };
 
-// Example with missing documents
-const individualDataIncomplete = {
-  _id: "68762915af70c4864d40fe53",
-  applicationId: "INDIVIDUAL-KYC00124",
-  
-  // Personal Information
-  customerName: "Priya Patel",
-  firstName: "Priya",
-  lastName: "Patel",
-  fatherName: "Ramesh Patel",
-  dateOfBirth: "1990-03-20T00:00:00.000Z",
-  email: "priya.patel@example.com",
-  mobile: "9876543211",
-  panNumber: "XYZAB5678C",
-  nationality: "Indian",
-  
-  // Address Information
+// Example with missing documents and phone number
+const individualSampleDataIncomplete = {
+  _id: "688e51c3d0adb06f43a75cec",
+  applicationId: "KYCAPP00151",
+  entityName: "Priya Sharma",
+  entityType: "INDIVIDUAL",
+  cin: "",
+  llpin: "",
+  pan: "ABCDE1234F",
+  customerId: "",
+  reason: "KYC Application",
+
+  authorizedSignatories: [
+    {
+      fullName: "Priya Sharma",
+      emailAddress: "priya.sharma@example.com",
+      // phoneNumber: "", // No phone number provided
+      dateOfBirth: "1990-03-20",
+      // title: "MS", // Will default to MR if not provided or if it's a generic description
+      pan: "ABCDE1234F",
+      personalDocuments: {
+        proofOfIdentity: {
+          data: {
+            fileName: "priya_pan_card.pdf",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00151_documents",
+            extractedContent: {
+              name: "Priya Sharma",
+              PAN_Number: "ABCDE1234F",
+              dateOfBirth: "20/03/1990"
+            },
+            verificationData: {
+              verifiedOn: "2025-01-15T14:30:00.000Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+          options: [
+            {
+              selectedType: "personalpan",
+              label: "Proof of Identity",
+              type: "proofOfIdentity",
+              acceptedTypes: "pdf, jpg, jpeg, png"
+            }
+          ]
+        },
+        proofOfAddress: {
+          data: {
+            fileName: "priya_aadhaar.pdf",
+            s3Url: "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00151_document",
+            extractedContent: {
+              name: "Priya Sharma",
+              address: "Flat 2B, Green Heights, Mumbai, Maharashtra - 400001",
+              fatherName: "Ramesh Sharma",
+              aadhaarNumber: "1234 5678 9012",
+              dateOfBirth: "15/05/1990"
+            },
+            verificationData: {
+              verifiedOn: "2025-01-15T14:35:00.000Z",
+              isVerified: true,
+              validationType: "Internal"
+            }
+          },
+                    options: [
+            {
+              selectedType: "aadhar",
+              label: "Proof of Address",
+              type: "proofOfAddress",
+              acceptedTypes: "pdf, jpg, jpeg, png"
+            }
+          ]
+        },
+        photograph: {
+          label: "Upload Photograph",
+          acceptedTypes: "jpg, jpeg, png",
+          type: "photograph"
+          // No data object - will show as "Not Uploaded"
+        },
+        specimenSignature: {
+          label: "Upload Specimen Signature",
+          acceptedTypes: "jpg, jpeg, png",
+          type: "signature"
+          // No data object - will show as "Not Uploaded"
+        }
+      }
+    }
+  ],
+
+  entityDocs: {},
+
+  mailingAddress: {
   roadName: "Flat 2B, Green Heights",
   city: "Mumbai",
   state: "Maharashtra",
   country: "India",
-  pinCode: "400001",
-  
-  // Permanent Address (same as mailing)
-  permRoadName: "Flat 2B, Green Heights",
-  permCity: "Mumbai",
-  permState: "Maharashtra",
-  permCountry: "India",
-  permPinCode: "400001",
-  
-  // Personal Details
-  single: true,
-  married: false,
-  divorced: false,
-  widowed: false,
-  
-  // Financial Details
-  income1to5lakh: true,
-  income0to1lakh: false,
-  income5to10lakh: false,
-  income10to25lakh: false,
-  incomeAbove25lakh: false,
-  
-  // Occupation
-  professional: true,
-  service: false,
-  business: false,
-  selfEmployed: false,
-  retired: false,
-  housewife: false,
-  student: false,
-  others: false,
-  
-  // Residence Type
-  rented: true,
-  owned: false,
-  parental: false,
-  company: false,
-  
-  // Documents - Only one document uploaded
-  documents: {
-    proofOfIdentity: {
-      fileName: "pan_card_priya.pdf",
-      s3Url: "https://ebi-kycus.s3.amazonaws.com/individual-kyc/INDIVIDUAL-KYC00124/documents/pan_card_priya.pdf",
-      uploadedAt: "2025-01-15T14:00:00.000Z",
-      isVerified: true,
-      validationType: "Government API",
-      extractedContent: {
-        name: "PRIYA PATEL",
-        fatherName: "RAMESH PATEL",
-        panNumber: "XYZAB5678C"
-      }
-    }
-    // proofOfAddress is missing
+    pinCode: "400001"
   },
-  
-  // Application timestamps
-  submittedAt: "2025-01-15T13:30:00.000Z",
-  updatedAt: "2025-01-15T14:30:00.000Z",
-  createdAt: "2025-01-15T13:00:00.000Z",
-  
-  // Application status
-  status: "IN_PROGRESS",
-  currentStep: "form",
-  isEsignCompleted: false,
-  
-  // Stepper information
+
+  registeredAddress: {
+    roadName: "Flat 2B, Green Heights",
+    city: "Mumbai",
+    state: "Maharashtra",
+    country: "India",
+    pinCode: "400001"
+  },
+
   stepper: [
-    { key: 0, label: "Documents", isCompleted: true },
+    { key: 0, label: "Documents", isCompleted: false },
     { key: 1, label: "Form", isCompleted: false },
     { key: 2, label: "Complete", isCompleted: false }
   ],
   
-  // Additional metadata
-  submittedByBankerId: "6860c98570dd7b6bfbe4693f",
-  submittedByBankerName: "Bank Officer Name",
-  submittedByBankerEmail: "officer@bank.com",
-  
-  _class: "com.ebitaus.kycus.features.banker.individual.kyc.entity.IndividualKycApplication"
+  currentStep: 0,
+  isEsignInitiated: false,
+  isVkycInitiated: false,
+  submittedByBankerId: "68762b6eaf70c4864d40fe5d",
+  submittedByBankerName: "Vinoth",
+  submittedByBankerEmail: "vinodhan.gopinath@ebitaus.com",
+  submittedAt: "2025-01-15T14:00:00.000Z",
+  updatedAt: "2025-01-15T14:30:00.000Z",
+
+  status: "IN_PROGRESS",
+  kycFormStatus: "Pending",
+  _class: "com.ebitaus.kycus.features.banker.kyc.entity.KycApplication"
 };

@@ -1,11 +1,10 @@
 // Global data variable that will be set by the data injection
-let individualReportData = null;
+let reportData = null;
 
 // Initialize the report when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-  // Use sample data if available, otherwise wait for data injection
-  if (typeof individualData !== 'undefined') {
-    setIndividualReportFormData(individualData);
+  if (typeof individualSampleData !== 'undefined') {
+    setReportFormData(individualSampleData);
   } else {
     // Set initial ready status for parent component
     window.status = "ready";
@@ -13,18 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Main function to set report data and render the report
-window.setIndividualReportFormData = function(inputData) {
+window.setReportFormData = function(inputData) {
   console.log('Setting individual report data:', inputData);
-  individualReportData = inputData;
+  reportData = inputData;
   
   try {
-    // Populate Individual information and documents
-    populateIndividualInfo(individualReportData);
-    generateIndividualFilesTable(individualReportData);
+    // Populate individual information and documents
+    populateIndividualInfo(reportData);
+    generateIndividualFilesTable(reportData);
     
     // Mark as ready for PDF generation
     window.status = "ready";
-    console.log('Individual KYC report generation completed successfully');
+    console.log('Individual report generation completed successfully');
   } catch (error) {
     console.error('Error generating individual report:', error);
     // Still mark as ready even on partial failure to prevent timeout
@@ -36,87 +35,117 @@ window.setIndividualReportFormData = function(inputData) {
 // Populate basic individual information
 function populateIndividualInfo(data) {
   // Set dynamic report header based on applicationId
-  const reportType = getIndividualReportType(data.applicationId);
+  const reportType = getReportType(data.applicationId);
   document.getElementById('reportHeader').textContent = `${reportType} - INDIVIDUAL`;
   
+  // Get individual details from authorizedSignatories[0] or fallback to root level
+  const individual = data.authorizedSignatories && data.authorizedSignatories.length > 0 
+    ? data.authorizedSignatories[0] 
+    : {};
+  
   // Individual basic info
-  const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim() || data.customerName || 'N/A';
-  document.getElementById('individualName').textContent = fullName;
+  const fullName = data.entityName || individual.fullName || individual.name || 'N/A';
   
-  // Individual details
-  document.getElementById('panNumber').textContent = data.panNumber || 'N/A';
-  document.getElementById('dateOfBirth').textContent = formatDate(data.dateOfBirth) || 'N/A';
-  document.getElementById('email').textContent = data.email || 'N/A';
-  document.getElementById('mobile').textContent = data.mobile || 'N/A';
+  // Use title from API data only if it's a proper title (not "Individual Applicant" type), otherwise default to MR
+  let title = 'MR'; // Default
+  if (individual.title && !individual.title.toLowerCase().includes('applicant') && !individual.title.toLowerCase().includes('individual')) {
+    title = individual.title;
+  }
   
-  // Application details
+  // Set the prominent title display
+  document.getElementById('individualTitle').textContent = `${title.toUpperCase()} ${fullName.toUpperCase()}`;
+  document.getElementById('panNumber').textContent = data.pan || individual.pan || 'N/A';
   document.getElementById('applicationId').textContent = `#${data.applicationId || 'N/A'}`;
-  document.getElementById('requestedOn').textContent = formatDate(data.submittedAt || data.createdAt);
+  
+  // Personal details from individual object
+  document.getElementById('dateOfBirth').textContent = individual.dateOfBirth || individual.dob || 'N/A';
+  document.getElementById('email').textContent = individual.emailAddress || individual.email || 'N/A';
+  document.getElementById('mobile').textContent = individual.phoneNumber || individual.mobile || individual.phone || 'N/A';
+  
+  // Application dates
+  document.getElementById('requestedOn').textContent = formatDate(data.submittedAt);
   document.getElementById('completedOn').textContent = formatDate(data.updatedAt);
 }
 
-
-
-// Generate individual documents table
+// Generate individual personal documents table
 function generateIndividualFilesTable(data) {
   const tableBody = document.getElementById('individualFilesBody');
   tableBody.innerHTML = '';
   
-  if (!data.documents) {
-    tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-gray">No documents found</td></tr>';
+  // Get individual from authorizedSignatories[0]
+  const individual = data.authorizedSignatories && data.authorizedSignatories.length > 0 
+    ? data.authorizedSignatories[0] 
+    : {};
+  
+  if (!individual.personalDocuments) {
+    tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-gray">No personal documents found</td></tr>';
     return;
   }
   
-  // Process only proof of identity and proof of address
-  const documentTypes = [
-    { key: 'proofOfIdentity', label: 'Proof of Identity' },
-    { key: 'proofOfAddress', label: 'Proof of Address' }
-  ];
+  // Check for PAN and Aadhaar DOB validation
+  const dobValidation = checkDOBValidation(individual.personalDocuments);
   
-  documentTypes.forEach(docType => {
-    const doc = data.documents[docType.key];
-    if (doc && (doc.fileName || doc.s3Url)) {
-      const row = createIndividualDocRow(doc, docType.label);
+  // Process proofOfIdentity, proofOfAddress, photograph, and specimenSignature
+  const documentsToProcess = ['proofOfIdentity', 'proofOfAddress', 'photograph', 'specimenSignature'];
+  let hasDocuments = false;
+  
+  documentsToProcess.forEach(docType => {
+    const doc = individual.personalDocuments[docType];
+    if (doc && shouldIncludeDocument(doc, docType)) {
+      const row = createIndividualDocRow(doc, docType, dobValidation);
       tableBody.appendChild(row);
-    } else {
-      // Show row for missing documents
-      const row = createEmptyDocRow(docType.label);
-      tableBody.appendChild(row);
+      hasDocuments = true;
     }
   });
+  
+  // If no valid documents were added, show empty message
+  if (!hasDocuments) {
+    tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-gray">No documents uploaded</td></tr>';
+  }
 }
 
 // Create a table row for an individual document
-function createIndividualDocRow(doc, docLabel) {
+function createIndividualDocRow(doc, docType, dobValidation) {
   const row = document.createElement('tr');
   
-  // Document Type (Files column) - with extracted content details
-  const typeCell = document.createElement('td');
-  typeCell.className = 'doc-type';
+  // File name/label with validation badge if applicable
+  const fileCell = document.createElement('td');
+  fileCell.className = 'doc-type';
   
-  // Create document type with extracted content details
-  const docTypeContainer = document.createElement('div');
-  docTypeContainer.innerHTML = `<span class="file-name">${docLabel}</span>`;
+  // Add validation badge only for PAN document when PAN and Aadhaar DOB matches
+  if (dobValidation.isValid && docType === 'proofOfIdentity') {
+    const badgeDiv = document.createElement('div');
+    badgeDiv.className = 'validation-badge';
+    badgeDiv.innerHTML = `<span class="badge-text">PAN Aadhaar Validated</span> <span class="tick-icon">✓</span>`;
+    fileCell.appendChild(badgeDiv);
+  }
   
+  const fileName = getDocumentLabel(doc, docType);
   
-  typeCell.appendChild(docTypeContainer);
+  // Create file name container
+  const fileNameDiv = document.createElement('div');
+  fileNameDiv.className = 'file-name';
+  fileNameDiv.textContent = fileName;
+  
+  fileCell.appendChild(fileNameDiv);
   
   // Status
   const statusCell = document.createElement('td');
-  const status = getIndividualDocumentStatus(doc);
+  const status = getPersonalDocumentStatus(doc);
   statusCell.innerHTML = `<span class="status ${status.class}">${status.text}</span>`;
   
   // Validation type
   const validationCell = document.createElement('td');
   validationCell.className = 'validation-cell';
-  validationCell.textContent = getIndividualValidationType(doc);
+  validationCell.textContent = getPersonalDocValidationType(doc, docType);
   
   // Verified date
   const dateCell = document.createElement('td');
   dateCell.className = 'date-cell';
-  dateCell.textContent = formatDate(doc.uploadedAt || doc.verifiedOn);
+  const verifiedDate = doc.data?.verificationData?.verifiedOn || doc.verificationData?.verifiedOn || doc.uploadedAt || doc.data?.uploadedAt;
+  dateCell.textContent = formatDate(verifiedDate);
   
-  row.appendChild(typeCell);
+  row.appendChild(fileCell);
   row.appendChild(statusCell);
   row.appendChild(validationCell);
   row.appendChild(dateCell);
@@ -124,118 +153,249 @@ function createIndividualDocRow(doc, docLabel) {
   return row;
 }
 
-// Create a table row for missing document
-function createEmptyDocRow(docLabel) {
-  const row = document.createElement('tr');
+// Check DOB validation between PAN and Aadhaar documents
+function checkDOBValidation(personalDocuments) {
+  const proofOfIdentity = personalDocuments.proofOfIdentity;
+  const proofOfAddress = personalDocuments.proofOfAddress;
   
-  // Document Type (Files column)
-  const typeCell = document.createElement('td');
-  typeCell.className = 'doc-type';
-  typeCell.textContent = docLabel;
+  if (!proofOfIdentity || !proofOfAddress) {
+    return { isValid: false };
+  }
   
-  // Status
-  const statusCell = document.createElement('td');
-  statusCell.innerHTML = '<span class="status unverified">Not Uploaded</span>';
+  // Get DOB from PAN (proofOfIdentity)
+  const panDOB = proofOfIdentity.data?.extractedContent?.dateOfBirth;
   
-  // Validation type
-  const validationCell = document.createElement('td');
-  validationCell.className = 'validation-cell';
-  validationCell.textContent = '-';
+  // Get DOB from Aadhaar (proofOfAddress)
+  const aadhaarDOB = proofOfAddress.data?.extractedContent?.dateOfBirth;
   
-  // Verified date
-  const dateCell = document.createElement('td');
-  dateCell.className = 'date-cell';
-  dateCell.textContent = '-';
+  if (panDOB && aadhaarDOB) {
+    // Compare dates (normalize format differences)
+    const normalizedPanDOB = normalizeDateString(panDOB);
+    const normalizedAadhaarDOB = normalizeDateString(aadhaarDOB);
+    
+    return {
+      isValid: normalizedPanDOB === normalizedAadhaarDOB,
+      panDOB: panDOB,
+      aadhaarDOB: aadhaarDOB
+    };
+  }
   
-  row.appendChild(typeCell);
-  row.appendChild(statusCell);
-  row.appendChild(validationCell);
-  row.appendChild(dateCell);
+  return { isValid: false };
+}
+
+// Normalize date strings for comparison
+function normalizeDateString(dateStr) {
+  if (!dateStr) return '';
   
-  return row;
+  // Handle different date formats: DD/MM/YYYY, DD-MM-YYYY, etc.
+  const cleaned = dateStr.replace(/[-\/]/g, '/');
+  
+  try {
+    // Try to parse as DD/MM/YYYY
+    const parts = cleaned.split('/');
+    if (parts.length === 3) {
+      const day = parts[0].padStart(2, '0');
+      const month = parts[1].padStart(2, '0');
+      const year = parts[2];
+      return `${day}/${month}/${year}`;
+    }
+  } catch (e) {
+    console.warn('Error normalizing date:', dateStr);
+  }
+  
+  return dateStr;
 }
 
 // Utility functions
 
-// Mask Aadhaar number showing only last 4 digits
-function maskAadhaarNumber(aadhaarNumber) {
-  if (!aadhaarNumber) return '';
-  // Remove all non-digits and spaces/hyphens
-  const digits = aadhaarNumber.toString().replace(/\D/g, '');
+function getReportType(applicationId) {
+  if (!applicationId) return 'KYC';
   
-  // Check if it's a valid 12-digit Aadhaar number
-  if (digits.length !== 12) return aadhaarNumber;
+  const id = applicationId.toString().toUpperCase();
   
-  const lastFour = digits.slice(-4);
-  return `xxxx-xxxx-${lastFour}`;
-}
-
-// Mask extracted content ONLY for Aadhaar number fields
-function maskExtractedContent(extractedContent) {
-  if (!extractedContent || typeof extractedContent !== 'object') {
-    return extractedContent;
+  // Check for RE-KYC patterns
+  if (id.includes('REKYC') || id.includes('RE-KYC') || id.includes('REKYCAPP')) {
+    return 'RE KYC';
   }
   
-  const maskedContent = { ...extractedContent };
-  
-  // Only mask fields that specifically contain Aadhaar numbers
-  const aadhaarFields = [
-    'aadhaarNumber', 
-    'aadharNumber', 
-    'uid', 
-    'uidai',
-    'aadhaar number',
-    'aadhar number'
-  ];
-  
-  // Only mask the Aadhaar number fields, leave everything else as-is
-  aadhaarFields.forEach(field => {
-    if (maskedContent[field]) {
-      maskedContent[field] = maskAadhaarNumber(maskedContent[field]);
-    }
-  });
-  
-  return maskedContent;
-}
-
-function getIndividualReportType(applicationId) {
-  // Always return KYC for Individual KYC reports
+  // Default to KYC
   return 'KYC';
 }
 
-function getIndividualDocumentStatus(doc) {
-  // 1. Check for Not Uploaded - no filename
-  if (!doc.fileName && !doc.s3Url) {
+function shouldIncludeDocument(doc, docType) {
+  // Include if it's a direct document with fileName
+  if (doc.fileName || doc.s3Url) {
+    return true;
+  }
+  
+  // Include if it's a configuration object with actual data
+  if (doc.data && (doc.data.fileName || doc.data.s3Url)) {
+    return true;
+  }
+  
+  // Skip pure configuration objects without files
+  return false;
+}
+
+function getPersonalDocumentStatus(doc) {
+  // 1. Check for Not Uploaded - no filename in data or direct object
+  const hasFileName = doc.fileName || doc.data?.fileName;
+  if (!hasFileName) {
     return { class: 'unverified', text: 'Not Uploaded' };
   }
   
   // 2. Check for Mismatch - extraction errors
-  if (doc.extractedContent?.error || doc.extractedData?.error) {
+  if (doc.extractedData?.error || doc.data?.extractedContent?.error) {
     return { class: 'mismatch', text: 'Mismatch' };
   }
   
-  // 3. Check verification status
-  if (doc.isVerified === true || doc.verified === true) {
+  // 3. Check if PAN document type for Verified
+  const docType = doc.documentSubType || doc.selectedType || doc.type || '';
+  if (isPanDocument(docType)) {
     return { class: 'verified', text: 'Verified' };
   }
   
-  // 4. Default to Uploaded if file exists
-  return { class: 'uploaded', text: 'Uploaded' };
+  // 4. Default to Uploaded for non-PAN documents
+  return { class: 'verified', text: 'Uploaded' };
 }
 
-function getIndividualValidationType(doc) {
-  if (doc.extractedContent?.error || doc.extractedData?.error) {
-    return 'OCR Error';
+function isPanDocument(docType) {
+  if (!docType) return false;
+  
+  const type = docType.toLowerCase();
+  const panPatterns = ['pan', 'personalpan'];
+  
+  // Check for PAN patterns
+  for (const pattern of panPatterns) {
+    if (type.includes(pattern)) {
+      return true;
+    }
   }
   
-  if (doc.validationType) {
-    return doc.validationType;
-  }
-  
-  return 'Digilocker';
+  return false;
 }
 
+function getPersonalDocValidationType(doc, docType) {
+  // Check for errors first
+  if (doc.extractedData?.error || (doc.data && doc.data.extractedContent?.error)) {
+    return 'Internal';
+  }
+  
+  // Determine validation type based on document type and content
+  if (docType === 'proofOfAddress') {
+    // Aadhaar documents use UIDAI
+    return 'UIDAI';
+  } else if (docType === 'proofOfIdentity') {
+    // PAN documents use PAN
+    return 'PAN';
+  } else if (docType === 'photograph' || docType === 'specimenSignature') {
+    // Photograph and signature use Internal
+    return 'Internal';
+  }
+  
+  // Default to Internal for others
+  return 'Internal';
+}
 
+function getDocumentLabel(doc, docType) {
+  // Try to get label from options array
+  if (doc.options && doc.options.length > 0) {
+    const selectedOption = doc.options.find(option => option.selectedType === doc.selectedType);
+    if (selectedOption && selectedOption.label) {
+      return selectedOption.label;
+    }
+  }
+  
+  // Handle direct label
+  if (doc.label) {
+    return doc.label;
+  }
+  
+  // Handle nested data fileName
+  if (doc.data && doc.data.fileName) {
+    return doc.data.fileName;
+  }
+  
+  // Handle direct fileName
+  if (doc.fileName) {
+    return doc.fileName;
+  }
+  
+  // Fallback to document type mapping
+  const typeLabels = {
+    'proofOfIdentity': 'Proof of Identity',
+    'proofOfAddress': 'Proof of Address',
+    'photograph': 'Upload Photograph',
+    'specimenSignature': 'Upload Specimen Signature',
+    'personalpan': 'PAN Card',
+    'aadhar': 'Aadhaar Card',
+    'passport': 'Passport',
+    'driving': 'Driving License',
+    'electricity': 'Electricity Bill',
+    'internet': 'Internet Bill',
+    'gas': 'Gas Bill',
+    'water': 'Water Bill',
+    'telephone': 'Telephone Bill',
+    'bankStatement': 'Bank Statement'
+  };
+  
+  return typeLabels[docType] || docType.charAt(0).toUpperCase() + docType.slice(1);
+}
+
+function getExtractedContent(doc) {
+  let extractedData = null;
+  
+  // Check different possible locations for extracted data
+  if (doc.extractedData) {
+    extractedData = doc.extractedData;
+  } else if (doc.data && doc.data.extractedContent) {
+    extractedData = doc.data.extractedContent;
+  } else if (doc.extractedContent) {
+    extractedData = doc.extractedContent;
+  }
+  
+  if (!extractedData) return null;
+  
+  // Handle error cases
+  if (extractedData.error) {
+    return `Error: ${extractedData.error}`;
+  }
+  
+  // Build extracted content display
+  const parts = [];
+  
+  // PAN specific fields
+  if (extractedData.PAN || extractedData.pan) {
+    parts.push(`PAN: ${extractedData.PAN || extractedData.pan}`);
+  }
+  
+  // Name fields
+  if (extractedData.Name || extractedData.name || extractedData.fullName) {
+    parts.push(`Name: ${extractedData.Name || extractedData.name || extractedData.fullName}`);
+  }
+  
+  // Date of Birth
+  if (extractedData.DOB || extractedData.dob || extractedData.dateOfBirth) {
+    parts.push(`DOB: ${extractedData.DOB || extractedData.dob || extractedData.dateOfBirth}`);
+  }
+  
+  // Father's name
+  if (extractedData.fatherName || extractedData.father_name) {
+    parts.push(`Father: ${extractedData.fatherName || extractedData.father_name}`);
+  }
+  
+  // Aadhaar number
+  if (extractedData.aadhaar || extractedData.aadhaarNumber) {
+    parts.push(`Aadhaar: ${extractedData.aadhaar || extractedData.aadhaarNumber}`);
+  }
+  
+  // Address
+  if (extractedData.address) {
+    parts.push(`Address: ${extractedData.address}`);
+  }
+  
+  return parts.length > 0 ? parts.join(' | ') : null;
+}
 
 function formatDate(dateInput) {
   if (!dateInput) return '';
@@ -258,7 +418,7 @@ function formatDate(dateInput) {
     return '';
   }
   
-  // Format as "MAR 25, 2025 09:29 AM"
+  // Format as "Jan 15, 2025, 03:30 PM"
   const options = {
     month: 'short',
     day: '2-digit',
@@ -268,7 +428,7 @@ function formatDate(dateInput) {
     hour12: true
   };
   
-  return date.toLocaleString('en-US', options).replace(',', ', ');
+  return date.toLocaleString('en-US', options);
 }
 
 // Set up message listeners for data injection from PDF generation
@@ -276,8 +436,8 @@ window.addEventListener('message', (event) => {
   const { type, payload } = event.data || {};
   
   if (type === 'SET_FORM_DATA' && payload) {
-    setIndividualReportFormData(payload);
+    setReportFormData(payload);
   }
 });
 
-console.log('Individual KYC report JavaScript loaded successfully');
+console.log('Individual report JavaScript loaded successfully');

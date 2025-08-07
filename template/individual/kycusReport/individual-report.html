@@ -19,49 +19,36 @@
       <!-- Individual Information Section -->
       <div class="individual-section">
         <div class="individual-header">
-          <h2 id="individualName"></h2>
+          <div class="individual-title" id="individualTitle">MR VINODHAN GOPINATH</div>
         </div>
         
-        <!-- PAN and Application ID in same row -->
-        <div class="parallel-row">
-          <div class="detail-row">
-            <span class="label">PAN Number</span>
-            <span id="panNumber"></span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Application Id</span>
-            <span id="applicationId"></span>
-          </div>
-        </div>
-        
-        <!-- Content grid for remaining details -->
-        <div class="content-grid">
-          <div class="individual-details">
-            <div class="detail-row">
-              <span class="label">Date of Birth</span>
-              <span id="dateOfBirth"></span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Email</span>
-              <span id="email"></span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Mobile</span>
-              <span id="mobile"></span>
-            </div>
-          </div>
-          
-          <div class="date-details">
-            <div class="detail-row">
-              <span class="label">Requested on</span>
-              <span id="requestedOn"></span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Completed on</span>
-              <span id="completedOn"></span>
-            </div>
-          </div>
-        </div>
+        <!-- Individual Details Table -->
+        <table class="individual-details-table">
+          <tr>
+            <td class="label">PAN Number</td>
+            <td class="value" id="panNumber"></td>
+            <td class="label">Application ID</td>
+            <td class="value" id="applicationId"></td>
+          </tr>
+          <tr>
+            <td class="label">Date of Birth</td>
+            <td class="value" id="dateOfBirth"></td>
+            <td class="label">Requested on</td>
+            <td class="value" id="requestedOn"></td>
+          </tr>
+          <tr>
+            <td class="label">Email</td>
+            <td class="value" id="email"></td>
+            <td class="label">Completed on</td>
+            <td class="value" id="completedOn"></td>
+          </tr>
+          <tr>
+            <td class="label">Mobile</td>
+            <td class="value" id="mobile"></td>
+            <td class="label"></td>
+            <td class="value"></td>
+          </tr>
+        </table>
       </div>
 
       <!-- Individual Documents Section -->

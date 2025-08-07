@@ -22,7 +22,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5;
   color: var(--primary-text);
-  background: linear-gradient(135deg, rgba(14, 60, 132, 0.05), rgba(206, 135, 105, 0.05));
+  background: white;
   background-attachment: fixed;
   font-size: 14px;
   font-weight: 400;
@@ -37,9 +37,9 @@ body {
   margin: 2rem auto;
   padding: 1.5rem;
   background: white;
-  box-shadow: var(--card-shadow);
-  border: 1px solid var(--primary-border);
-  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #ddd;
+  border-radius: 0;
   box-sizing: border-box;
   overflow: hidden;
   page-break-after: always;
@@ -63,41 +63,32 @@ body {
   page-break-after: always;
 }
 
-/* Page Header - appears on every page */
+/* Page Header - simplified report style */
 .page-header {
   text-align: center;
   margin-bottom: 30px;
   padding: 20px 0;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  border-radius: 8px;
+  background: white;
+  border-radius: 0;
   position: relative;
-  box-shadow: var(--card-shadow);
+  box-shadow: none;
+  border-bottom: 3px solid var(--primary-blue);
 }
 
 .page-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%), 
-              linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-  border-radius: 8px;
-  opacity: 0.3;
+  display: none;
 }
 
 .page-header h1 {
   font-size: 24px;
   font-weight: 700;
   margin: 0;
-  color: white;
+  color: var(--primary-blue);
   position: relative;
   z-index: 1;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  text-shadow: none;
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 /* Page Content - main area */
@@ -125,79 +116,94 @@ body {
   font-weight: bold;
 }
 
-/* Individual Section - Only on first page */
+/* Individual Section - Table-like report format */
 .individual-section {
   display: block;
   margin-bottom: 30px;
-  padding: 25px;
+  padding: 0;
   background: white;
-  border: 1px solid var(--primary-border);
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   position: relative;
 }
 
 .individual-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-  border-radius: 12px 12px 0 0;
+  display: none;
 }
 
+/* Individual Details Table Format */
 .individual-header {
   margin-bottom: 20px;
+  padding: 15px 0;
+  border-bottom: 2px solid var(--primary-blue);
 }
 
-.individual-header h2 {
-  font-size: 22px;
+.individual-title {
+  font-size: 18px;
   font-weight: 700;
   color: var(--primary-blue);
-  margin: 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: left;
   line-height: 1.2;
 }
 
-.parallel-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  padding-bottom: 15px;
+
+
+/* Convert to table format */
+.individual-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  border: 1px solid var(--primary-border);
+  table-layout: fixed;
 }
 
-.parallel-row .detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.individual-details-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--primary-border);
+  font-size: 12px;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.individual-details-table .label {
+  font-weight: 600;
+  color: var(--secondary-text);
+  background-color: #f8f9fa;
+  width: 18%;
+  text-align: left;
+}
+
+.individual-details-table .value {
+  color: var(--primary-text);
+  font-weight: 500;
+  width: 32%;
+}
+
+/* Keep existing styles for backward compatibility */
+.parallel-row {
+  display: none;
 }
 
 .content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  display: none;
 }
 
 .individual-details {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: none;
 }
 
 .date-details {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: none;
 }
 
 .detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 32px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f1f5f9;
+  display: none;
 }
 
 .detail-row:last-child {
@@ -224,7 +230,7 @@ body {
 
 
 
-/* Section Headers */
+/* Section Headers - simplified report style */
 .section {
   margin-bottom: 35px;
   padding: 0;
@@ -234,30 +240,26 @@ body {
 .section h3 {
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary-blue);
   margin-bottom: 25px;
   padding: 15px 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
-  border-bottom: 3px solid;
-  border-image: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)) 1;
+  border-bottom: 2px solid var(--primary-blue);
 }
 
-/* Enhanced Table Styles */
+/* Traditional Table Styles */
 .files-table {
   width: 100%;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
   margin-bottom: 0;
   font-size: 14px;
   border: 1px solid var(--primary-border);
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: none;
   background: white;
   table-layout: fixed;
 }
@@ -288,7 +290,7 @@ body {
 }
 
 .files-table thead {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: var(--primary-blue);
 }
 
 .files-table th {
@@ -334,28 +336,28 @@ body {
 .status {
   display: inline-flex;
   align-items: center;
-  padding: 8px 16px;
-  font-size: 12px;
+  padding: 4px 10px;
+  font-size: 10px;
   font-weight: 600;
-  border-radius: 25px;
+  border-radius: 15px;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  min-width: 90px;
+  letter-spacing: 0.5px;
+  min-width: 70px;
   justify-content: center;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .status.verified {
   color: #ffffff;
   background: linear-gradient(135deg, #22c55e, #16a34a);
-  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 1px 2px rgba(34, 197, 94, 0.3);
 }
 
 .status.uploaded {
   color: #ffffff;
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  box-shadow: 0 2px 4px rgba(14, 60, 132, 0.3);
+  box-shadow: 0 1px 2px rgba(14, 60, 132, 0.3);
 }
 
 .status.unverified {
@@ -367,13 +369,13 @@ body {
 .status.mismatch {
   color: #ffffff;
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.3);
 }
 
 .status.error {
   color: #ffffff;
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.3);
 }
 
 /* Print Optimization */
@@ -542,6 +544,31 @@ body {
   align-items: center;
   margin-bottom: 4px;
   font-weight: normal;
+}
+
+/* Validation Badge Styles */
+.validation-badge {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 1px 2px rgba(34, 197, 94, 0.3);
+}
+
+.validation-badge .badge-text {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.validation-badge .tick-icon {
+  font-size: 12px;
+  font-weight: bold;
 }
 
 /* Responsive adjustments for Individual KYC */
