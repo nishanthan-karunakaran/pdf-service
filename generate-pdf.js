@@ -46,6 +46,7 @@ async function generatePdf(data, type, attempt = 0) {
       window.postMessage(
         {
           type: "SET_FORM_DATA",
+          source: "parent",
           payload: data,
         },
         "*"
