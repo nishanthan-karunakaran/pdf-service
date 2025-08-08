@@ -6,7 +6,7 @@
     <title>Individual KYC FORM</title>
     <link rel="stylesheet" href="./kyc.css" />
     <link rel="stylesheet" href="./var.css" />
-    <link rel="stylesheet" href="./individual-rekyc.css" />
+    <link rel="stylesheet" href="./individual-kyc.css" />
     <script>
       // Handle Others checkbox functionality
       document.addEventListener('DOMContentLoaded', function() {
@@ -120,8 +120,161 @@
 
       // Handle form data from parent React component
       window.addEventListener('message', function(event) {
-        if (event.data.type === 'SET_FORM_DATA') {
-          const formData = event.data.payload;
+        let a = true
+        if (a) {
+          const formData = {
+        "_id": "688e51c3d0adb06f43a75ceb",
+        "applicationId": "KYCAPP00150",
+        "entityName": "Vinodhan",
+        "entityType": "INDIVIDUAL",
+        "cin": "",
+        "llpin": "",
+        "pan": "dsff",
+        "customerId": "",
+        "reason": "KYC Application",
+        "authorizedSignatories": [
+            {
+                "fullName": "Vinodhan Gopinath",
+                "emailAddress": "vinodhan@ebitaus.com",
+                "phoneNumber": "9876543210",
+                "dateOfBirth": "1985-06-15",
+                "pan": "DNGPG7456I",
+                "personalDocuments": {
+                    "proofOfIdentity": {
+                        "data": {
+                            "fileName": "Nishanthan Pan Card.pdf",
+                            "s3Url": "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_documents",
+                            "extractedContent": {
+                                "name": "Vinodhan G",
+                                "PAN_Number": "CXKPN9255M",
+                                "dateOfBirth": "02/12/2001"
+                            },
+                            "verificationData": {
+                                "verifiedOn": "2025-08-05T19:36:57.745Z",
+                                "isVerified": true,
+                                "validationType": "Internal"
+                            }
+                        },
+                        "options": [
+                            {
+                                "selectedType": "personalpan",
+                                "label": "Proof of Identity",
+                                "type": "proofOfIdentity",
+                                "acceptedTypes": "pdf, jpg, jpeg, png"
+                            }
+                        ]
+                    },
+                    "proofOfAddress": {
+                        "data": {
+                            "fileName": "vinodhan_aadhaar.pdf",
+                            "s3Url": "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_document",
+                            "extractedContent": {
+                                "name": "Vinodhan Gopinath",
+                                "address": "S/O: Gopinath, No 25, PERUMAL SOUTH STREET, Nagore (Kottagam), Nagapat",
+                                "fatherName": "Gopinath",
+                                "aadhaarNumber": "9956 9998 4385",
+                                "dateOfBirth": "02/12/2001"
+                            },
+                            "verificationData": {
+                                "verifiedOn": "2025-08-05T19:36:57.745Z",
+                                "isVerified": true,
+                                "validationType": "Internal"
+                            }
+                        },
+                        "options": [
+                            {
+                                "selectedType": "aadhar",
+                                "label": "Proof of Address",
+                                "type": "proofOfAddress",
+                                "acceptedTypes": "pdf, jpg, jpeg, png"
+                            }
+                        ]
+                    },
+                    "photograph": {
+                        "data": {
+                            "fileName": "vinodhan_photograph.jpg",
+                            "s3Url": "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_photograph",
+                            "verificationData": {
+                                "verifiedOn": "2025-08-05T19:36:57.745Z",
+                                "isVerified": true,
+                                "validationType": "Internal"
+                            }
+                        },
+                        "label": "Upload Photograph",
+                        "acceptedTypes": "jpg, jpeg, png",
+                        "type": "photograph"
+                    },
+                    "specimenSignature": {
+                        "data": {
+                            "fileName": "vinodhan_signature.jpg",
+                            "s3Url": "https://ebi-kycus.s3.amazonaws.com/individual_kyc_KYCAPP00150_signature",
+                            "verificationData": {
+                                "verifiedOn": "2025-08-05T19:36:57.745Z",
+                                "isVerified": true,
+                                "validationType": "Internal"
+                            }
+                        },
+                        "label": "Upload Specimen Signature",
+                        "acceptedTypes": "jpg, jpeg, png",
+                        "type": "signature"
+                    }
+                }
+            }
+        ],
+        "entityDocs": {},
+        "mailingAddress": {
+            "roadName": "Plot No. 123, Sector 45",
+            "city": "Gurgaon",
+            "state": "Haryana",
+            "country": "India",
+            "pinCode": "122001"
+        },
+        "registeredAddress": {
+            "roadName": "Plot No. 123, Sector 45",
+            "city": "Gurgaon",
+            "state": "Haryana",
+            "country": "India",
+            "pinCode": "122001"
+        },
+        "stepper": [
+            {
+                "key": 0,
+                "label": "Documents",
+                "isCompleted": true
+            },
+            {
+                "key": 1,
+                "label": "Form",
+                "isCompleted": true
+            },
+            {
+                "key": 2,
+                "label": "Complete",
+                "isCompleted": true
+            }
+        ],
+        "currentStep": 1,
+        "isEsignInitiated": true,
+        "isVkycInitiated": false,
+        "submittedByBankerId": "68762b6eaf70c4864d40fe5d",
+        "submittedByBankerName": "Vinoth",
+        "submittedByBankerEmail": "vinodhan.gopinath@ebitaus.com",
+        "submittedAt": "2025-01-15T12:58:27.597Z",
+        "updatedAt": "2025-01-15T16:40:00.426Z",
+        "reportS3Url": "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00150/report/kyc_form_175.pdf",
+        "toBeSignedReportS3Url": "https://ebi-kycus.s3.amazonaws.com/kyc/KYCAPP00150/report/toBeSigned/toBeSigned.pdf",
+        "esignDocId": "ac4f2fba-c9a1-4cd3-8977-13ca23ae675b",
+        "isSigningCompleted": false,
+        "esignType": "aadharEsign",
+        "esignUserDetails": {
+            "name": "Vinodhan Gopinath",
+            "mobile": "9876543210",
+            "email": "vinodhan.gopinath@example.com"
+        },
+        "status": "ESIGN_PENDING",
+        "kycFormStatus": "Completed",
+        "_class": "com.ebitaus.kycus.features.banker.kyc.entity.KycApplication"
+    };
   
           
           // Populate form fields with data from API
@@ -485,7 +638,9 @@
             // Form 60 checkbox
             if (formData.form60 !== undefined) populateField('form60', formData.form60);
 
-    
+            // Mark form data population as complete - signal PDF generation can proceed
+            window.status = "ready";
+            console.log('Individual KYC form data population completed - ready for PDF generation');
           }
         }
       });
