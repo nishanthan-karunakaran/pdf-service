@@ -1595,7 +1595,7 @@ function createBRAuthorizedPersonElement(person) {
   
   const personHeader = document.createElement('div');
   personHeader.className = 'br-person-header';
-  personHeader.innerHTML = `• ${person.fullName}${person.role ? ` (${person.role})` : ''}`;
+  personHeader.innerHTML = `• ${person.fullName}`;
   
   personItem.appendChild(personHeader);
 
