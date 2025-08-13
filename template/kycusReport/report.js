@@ -2129,7 +2129,7 @@ function getPersonalDocumentStatus(doc) {
   // 3. Check if PAN/GSTIN document type for Verified vs Uploaded
   const docType = doc.documentSubType || doc.selectedType || doc.type || '';
   if (isPanOrGstinDocument(docType)) {
-    return { class: 'verified', text: 'Verified' };
+    return { class: 'verified', text: 'Validated' };
   }
   
   // 4. Default to Uploaded for non-PAN/GSTIN documents
@@ -2144,32 +2144,45 @@ function getPersonalDocValidationType(doc) {
 }
 
 function getDocumentLabel(doc, docType) {
-  // Handle configuration objects
+  // Handle configuration objects with explicit labels
   if (doc.label) {
     return doc.label;
   }
   
-  // Handle direct document objects
-  if (doc.fileName) {
-    return doc.fileName;
-  }
-  
-  // Fallback to document type mapping
+  // Prioritize document type mapping for better readability
   const typeLabels = {
     'personalpan': 'PAN',
     'aadhar': 'Aadhaar',
+    'aadhaar-address': 'Aadhaar',
     'passport': 'Passport',
     'driving': 'Driving License',
     'electricity': 'Address Proof: Electricity Bill',
     'internet': 'Address Proof: Internet Bill',
     'gas': 'Address Proof: Gas Bill',
     'photograph': 'Photograph',
+    'signature': 'Specimen Signature',
     'specimenSignature': 'Specimen Signature',
     'director_identification_number': 'Director Identification Number',
     'board_resolution': 'Board Resolution'
   };
   
-  return typeLabels[docType] || docType.charAt(0).toUpperCase() + docType.slice(1);
+  // Check document subtype first
+  if (doc.documentSubType && typeLabels[doc.documentSubType]) {
+    return typeLabels[doc.documentSubType];
+  }
+  
+  // Check docType parameter
+  if (docType && typeLabels[docType]) {
+    return typeLabels[docType];
+  }
+  
+  // Fallback to file name if no type mapping found
+  if (doc.fileName) {
+    return doc.fileName;
+  }
+  
+  // Final fallback
+  return docType ? docType.charAt(0).toUpperCase() + docType.slice(1) : 'Unknown Document';
 }
 
 function formatDate(dateInput) {
