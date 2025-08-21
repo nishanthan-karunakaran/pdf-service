@@ -798,7 +798,7 @@ function isPanOrGstinDocument(docType) {
   const type = docType.toLowerCase();
 
   // PAN variations: pan, pan_card, personalpan
-  const panPatterns = ["pan", "personalpan"];
+  const panPatterns = ["pan", "personalpan", "cin", "coi"];
 
   // GSTIN variations: gst, gst_certificate, gstin
   const gstinPatterns = ["gst", "gstin"];
@@ -957,7 +957,7 @@ function getPersonalDocValidationType(doc) {
   ) {
     return "Protean";
   }
-  return "Digilocker";
+  return "Internal";
 }
 
 function getDocumentLabel(doc, docType) {
