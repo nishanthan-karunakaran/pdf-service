@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Main function to set report data and render the report
 window.setReportFormData = function (inputData) {
   console.log("Setting report data:", inputData);
-  reportData = inputData
+  reportData = inputData;
 
   // Reset person counter for each new report
   window.personCounter = { director: 0, aus: 0 };
@@ -535,12 +535,12 @@ function createPersonSection(person, index) {
     const aadhaarVerified = isAadhaarVerified(person.data.personalDocuments);
 
     // Only create verification container if at least one is verified
-    if (panVerified || aadhaarVerified) {
+    if (panVerified || aadhaarVerified || person.data.isVerifiedByUser) {
       const verificationContainer = document.createElement("div");
       verificationContainer.className = "header-verification-labels";
 
       // Add DIN PAN Match label only if PAN is verified
-      if (panVerified) {
+      if (panVerified || person.data.isVerifiedByUser) {
         const dinPanLabel = document.createElement("div");
         dinPanLabel.className = "verification-label-small";
         dinPanLabel.innerHTML = `DIN PAN Match <span class="tick-icon">✓</span>`;
@@ -548,7 +548,7 @@ function createPersonSection(person, index) {
       }
 
       // Add DIN Aadhaar Match label only if Aadhaar is verified
-      if (aadhaarVerified) {
+      if (aadhaarVerified || person.data.isVerifiedByUser) {
         const dinAadhaarLabel = document.createElement("div");
         dinAadhaarLabel.className = "verification-label-small";
         dinAadhaarLabel.innerHTML = `DIN Aadhaar Match <span class="tick-icon">✓</span>`;
